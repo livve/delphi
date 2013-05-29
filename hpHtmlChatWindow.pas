@@ -97,7 +97,7 @@ const
  *)
 procedure Register;
 begin
-  RegisterComponents('hpVcl', [ThpHtmlChatWindow]);
+  RegisterComponents('hpVCL', [ThpHtmlChatWindow]);
 end;
 
 (* ThpHtmlChatWindow *)
