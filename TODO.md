@@ -1,3 +1,4 @@
 TODO
 
-[ ] Chat window based on EmbeddedWB
+- [ ] Import missing components
+- [ ] Chat window based on EmbeddedWB
