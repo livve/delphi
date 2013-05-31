@@ -1,34 +1,24 @@
-unit hpHtmlChatWindow;
+unit hpEmbeddedWbChatWindow;
 
 (**
- * @copyright Copyright (C) 2010-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2013, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
- * @package   hpHtmlChatWindow
- * @version   1.03
+ * @package   hpEmbeddedWbChatWindow
+ * @version   1.00
  *)
 
 (**
  * History
  *
- * V1.03 2011-05-19
- * - Used custom color type ThpColor in ThpFontSettings. It allows easy
- *   conversion to/from an HTML color code
- *
- * V1.02 2011-05-05
- * - Added option to convert newlines
- *
- * V1.01
- * - Added border to the system message
- *
- * V1.00 2010-11-25
- * - Initial release
+ * V1.00 2013-05-31
+ * - Initial release (copy of THtmlChatWindow)
  *)
 
 interface
 
 uses
-  Classes, Graphics, Htmlview, hpTypes;
+  Classes, Graphics, hpTypes, EmbeddedWB;
 
 type
   (**
@@ -42,9 +32,9 @@ type
   end;
 
   (**
-   * ThpHtmlChatWindow
+   * ThpEmbeddedWbChatWindow
    *)
-  ThpHtmlChatWindow = class(THTMLViewer)
+  ThpEmbeddedWbChatWindow = class(TEmbeddedWB)
   private
     FContent: TStringList;
     FContentMax: Integer;
@@ -59,7 +49,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Initialize;
-    procedure Clear; override;
+    procedure Clear;
     procedure Add(const AHtml: string); overload;
     procedure Add(const AUsername, AMessage: string); overload;
     procedure Add(const AMessage: string; AMsgFont: ThpFontSettings); overload;
@@ -97,12 +87,12 @@ const
  *)
 procedure Register;
 begin
-  RegisterComponents('hpVCL', [ThpHtmlChatWindow]);
+  RegisterComponents('hpVCL', [ThpEmbeddedWbChatWindow]);
 end;
 
-(* ThpHtmlChatWindow *)
+(* ThpEmbeddedWbChatWindow *)
 
-constructor ThpHtmlChatWindow.Create(AOwner: TComponent);
+constructor ThpEmbeddedWbChatWindow.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 
@@ -123,14 +113,14 @@ begin
   FConvertNewlines := False;
 end;
 
-destructor ThpHtmlChatWindow.Destroy;
+destructor ThpEmbeddedWbChatWindow.Destroy;
 begin
   FContent.Clear;
   FContent.Free;
   inherited Destroy;
 end;
 
-function ThpHtmlChatWindow.GetFontStyle(AFont: ThpFontSettings; ASystemFont: Boolean = False): string;
+function ThpEmbeddedWbChatWindow.GetFontStyle(AFont: ThpFontSettings; ASystemFont: Boolean = False): string;
 begin
   Result := Format(HTML_STYLE_FONT, [AFont.Name, AFont.Size, string(AFont.Color)]);
 
@@ -152,26 +142,25 @@ begin
   Result := Format('style="%s"', [Result]);
 end;
 
-procedure ThpHtmlChatWindow.Initialize;
+procedure ThpEmbeddedWbChatWindow.Initialize;
 var
   style: string;
 begin
   style := GetFontStyle(FDefaultFont);
-  style := Copy(style, 1, Length(style) - 1);
+  style := System.Copy(style, 1, Length(style) - 1);
   style := Format('%sbackground-color:%s;"', [style, string(FBackgroundColor)]);
 
   FContent.Add(Format('<html><body %s>', [style]));
-  LoadFromString(FContent.Text);
+  LoadFromStrings(FContent);
 end;
 
-procedure ThpHtmlChatWindow.Clear;
+procedure ThpEmbeddedWbChatWindow.Clear;
 begin
-  inherited Clear;
   FContent.Clear;
   Initialize;
 end;
 
-procedure ThpHtmlChatWindow.Add(const AHtml: string);
+procedure ThpEmbeddedWbChatWindow.Add(const AHtml: string);
 var
   i, count: Integer;
 begin
@@ -184,32 +173,32 @@ begin
   for i := 0 to count do
     FContent.Delete(1);
 
-  LoadFromString(FContent.Text);
-  ScrollTo(VScrollBar.Max);
+  LoadFromStrings(FContent);
+  ScrollToBottom;
 end;
 
-procedure ThpHtmlChatWindow.Add(const AUsername, AMessage: string);
+procedure ThpEmbeddedWbChatWindow.Add(const AUsername, AMessage: string);
 begin
   Add(AUsername, AMessage, FDefaultFont);
 end;
 
-procedure ThpHtmlChatWindow.Add(const AMessage: string; AMsgFont: ThpFontSettings);
+procedure ThpEmbeddedWbChatWindow.Add(const AMessage: string; AMsgFont: ThpFontSettings);
 begin
   Add(Format('<span %s>%s</span>', [GetFontStyle(AMsgFont), AMessage]));
 end;
 
-procedure ThpHtmlChatWindow.Add(const AUsername, AMessage: string; AMsgFont: ThpFontSettings);
+procedure ThpEmbeddedWbChatWindow.Add(const AUsername, AMessage: string; AMsgFont: ThpFontSettings);
 begin
   Add(Format('%s: <span %s>%s</span>', [AUsername, GetFontStyle(AMsgFont), AMessage]));
 end;
 
-procedure ThpHtmlChatWindow.Add(const AUsername, AMessage: string; AUsrFont, AMsgFont: ThpFontSettings);
+procedure ThpEmbeddedWbChatWindow.Add(const AUsername, AMessage: string; AUsrFont, AMsgFont: ThpFontSettings);
 begin
   Add(Format('<span %s>%s:</span> <span %s>%s</span>',
     [GetFontStyle(AUsrFont), AUsername, GetFontStyle(AMsgFont), AMessage]));
 end;
 
-procedure ThpHtmlChatWindow.AddSystemMessage(const AMessage: string);
+procedure ThpEmbeddedWbChatWindow.AddSystemMessage(const AMessage: string);
 begin
   { Changed div to span }
   Add(Format('<span %s>%s</span>', [GetFontStyle(FSystemFont, True), AMessage]));
