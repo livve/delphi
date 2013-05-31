@@ -2,8 +2,7 @@
 
 ### IN PROGRESS
 
-    [ ] Chat window based on EmbeddedWB
-
 ### DONE
 
+    [X] Chat window based on EmbeddedWB
     [X] Import missing components
