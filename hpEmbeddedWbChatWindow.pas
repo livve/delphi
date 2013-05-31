@@ -145,7 +145,7 @@ var
 begin
   style := GetFontStyle(FDefaultFont);
   style := System.Copy(style, 1, Length(style) - 1);
-  style := Format('%sbackground-color:%s;"', [style, string(FBackgroundColor)]);
+  style := Format('%sbackground-color:#000000;"', [style]); // set to black
 
   FContent.Add(Format('<html><body %s>', [style]));
   LoadFromStrings(FContent);
