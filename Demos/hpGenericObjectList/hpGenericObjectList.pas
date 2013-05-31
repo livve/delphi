@@ -3,9 +3,9 @@
 unit hpGenericObjectList;
 
 (**
- * @copyright Copyright (C) 2011, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2013, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  hpClasses
+ * @category  Classes
  * @package   ThpGenericObjectList
  * @version   1.02
  *
