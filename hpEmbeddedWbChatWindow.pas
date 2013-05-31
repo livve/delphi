@@ -136,9 +136,6 @@ begin
   if fsUnderline in AFont.Style then
     Result := Result + Format(HTML_STYLE_UNDERLINE, [string(AFont.Color)]);
 
-  {if ASystemFont then
-    Result := Result + HTML_SYSTEM_BORDER;}
-
   Result := Format('style="%s"', [Result]);
 end;
 
@@ -200,7 +197,6 @@ end;
 
 procedure ThpEmbeddedWbChatWindow.AddSystemMessage(const AMessage: string);
 begin
-  { Changed div to span }
   Add(Format('<span %s>%s</span>', [GetFontStyle(FSystemFont, True), AMessage]));
 end;
 
