@@ -1,4 +1,7 @@
 ### TODO
 
-    [ ] Import missing components
     [ ] Chat window based on EmbeddedWB
+
+### DONE
+
+    [X] Import missing components
