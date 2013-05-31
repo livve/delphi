@@ -18,7 +18,10 @@ unit hpEmbeddedWbChatWindow;
 interface
 
 uses
-  Classes, Graphics, hpTypes, EmbeddedWB;
+  Classes, Graphics, Messages, hpTypes, EmbeddedWB;
+
+const
+  WM_SCROLL_TO_BOTTOM = WM_USER + 1;
 
 type
   (**
@@ -45,6 +48,7 @@ type
     FConvertNewlines: Boolean;
   protected
     function GetFontStyle(AFont: ThpFontSettings; ASystemFont: Boolean = False): string;
+    procedure WMScrollToBottom(var Msg: TMessage); message WM_SCROLL_TO_BOTTOM;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -139,6 +143,11 @@ begin
   Result := Format('style="%s"', [Result]);
 end;
 
+procedure ThpEmbeddedWbChatWindow.WMScrollToBottom(var Msg: TMessage);
+begin
+  ScrollToBottom;
+end;
+
 procedure ThpEmbeddedWbChatWindow.Initialize;
 var
   style: string;
@@ -171,7 +180,9 @@ begin
     FContent.Delete(1);
 
   LoadFromStrings(FContent);
-  ScrollToBottom;
+  
+  //ScrollToBottom; // doesn't work here, jumps back to top
+  PostMessage(Self.Handle, WM_SCROLL_TO_BOTTOM, 0, 0);
 end;
 
 procedure ThpEmbeddedWbChatWindow.Add(const AUsername, AMessage: string);
