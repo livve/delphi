@@ -62,7 +62,7 @@ function ReplaceStrings(const ASubject: string;
 implementation
 
 uses
-  System.SysUtils;
+  SysUtils;
 
 function RemoveStrings(const ASubject: string;
   const APatterns: array of string): string;

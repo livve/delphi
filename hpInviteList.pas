@@ -18,7 +18,7 @@ unit hpInviteList;
 interface
 
 uses
-  System.Classes, System.Generics.Defaults, System.Generics.Collections;
+  Classes, Generics.Defaults, Generics.Collections;
 
 type
   ThpInviteItem = record
@@ -43,7 +43,7 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  SysUtils;
 
 function hpInviteItemCompare(const ALeft, ARight: ThpInviteItem): Integer;
 begin
