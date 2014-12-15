@@ -1,15 +1,19 @@
 unit hpImageButton;
 
 (**
- * @copyright Copyright (C) 2011-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
  * @package   ThpImageButton
- * @version   1.03
+ * @version   1.04
  *)
 
 (**
  * History
+ *
+ * V1.04
+ * - Added TransparentGlyph
+ * - Added ShadowColor
  *
  * V1.03
  * - Added painting of mouse down image
@@ -51,7 +55,10 @@ type
     FHighlightColor: TColor;
     FMouseDown: Boolean;
     FNormalColor: TColor;
+    FShadowColor: TColor;
     FNumGlyphs: Integer;
+    FTransparentGlyph: Boolean;
+    procedure SetTransparentGlyph(Value: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -71,13 +78,18 @@ type
     property AutoSize;
     property Caption;
 	property Cursor;
+    property TransparentGlyph: Boolean read FTransparentGlyph write SetTransparentGlyph;
     property Enabled;
     property Font;
     property Hint;
+    property ShadowColor: TColor read FShadowColor write FShadowColor;
     property ParentFont;
     property ParentShowHint;
     property ShowHint;
     property OnClick;
+    property OnMouseUp;
+    property OnMouseDown;
+    property Visible;
   end;
 
 procedure Register;
@@ -103,13 +115,21 @@ begin
   Canvas.CopyMode := cmSrcCopy;
   FGlyph := TPicture.Create;
   FMouseDown := False;
+  TransparentGlyph := True;
   FNumGlyphs := 2;
+  FShadowColor := RGB(80, 80, 80);
 end;
 
 destructor ThpImageButton.Destroy;
 begin
   FGlyph.Free;
   inherited;
+end;
+
+procedure ThpImageButton.SetTransparentGlyph(Value: Boolean);
+begin
+  FTransparentGlyph:= Value;
+  Invalidate;
 end;
 
 procedure ThpImageButton.LoadFromFile(const AFileName: string);
@@ -153,6 +173,8 @@ procedure ThpImageButton.Paint;
 var
   srcImg, dstImg, dstText: TRect;
   imgWidth, imgHeight, offsetX, offsetY: Integer;
+  shadowRect: TRect;
+  oldColor: TColor;
 begin
   if (csDestroying in ComponentState) then
     Exit;
@@ -170,13 +192,26 @@ begin
     if FMouseDown then
       srcImg := Rect(imgWidth, 0, 2 * imgWidth, imgHeight);
 
+    FGlyph.Bitmap.TransparentColor := FGlyph.Bitmap.Canvas.Pixels[0, 0];
+    FGlyph.Bitmap.Transparent := FTransparentGlyph;
+
     Canvas.CopyRect(dstImg, FGlyph.Bitmap.Canvas, srcImg);
   end;
 
   if Caption > '' then begin
     dstText := Rect(0, 0, Width, Height);
-    Canvas.Font.Assign(Font);
     Canvas.Brush.Style := bsClear;
+    Canvas.Font.Assign(Font);
+
+    oldColor := Canvas.Font.Color;
+
+    shadowRect := dstText;
+    OffsetRect(shadowRect, 1, 1);
+    Canvas.Font.Color := FShadowColor;
+    DrawText(Canvas.Handle, PChar(Caption), Length(Caption), shadowRect,
+      DT_SINGLELINE or DT_VCENTER or DT_CENTER);
+
+    Canvas.Font.Color := oldColor;
     DrawText(Canvas.Handle, PChar(Caption), Length(Caption), dstText,
       DT_SINGLELINE or DT_VCENTER or DT_CENTER);
   end;

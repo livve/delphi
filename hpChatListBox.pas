@@ -1,15 +1,18 @@
 unit hpChatListBox;
 
 (**
- * @copyright Copyright (C) 2008-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2008-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
  * @package   ThpChatListBox
- * @version   1.27
+ * @version   1.28
  *)
 
 (**
  * History
+ *
+ * V1.28
+ * - Changes by Simon
  *
  * V1.27
  * - Changed sort, moved co-moderator between moderator and voice
@@ -141,6 +144,11 @@ type
     FVideo: Boolean;
     FVoice: Boolean;
     FOk: Boolean;
+    FRanked: Boolean;
+    FGaming: Boolean;
+    FGoodlatency: Boolean;
+    FHighlatency: Boolean;
+    FMeasuring: Boolean;
     FTrophy: Boolean;
     FTextColor: TColor;
     FBorderColor: TColor;
@@ -148,6 +156,11 @@ type
     FIsAfkSeparator: Boolean;
     FIsBlocked: Boolean;
     FCustomIconIndex: Integer;
+    FCustomBIconIndex: Integer;
+    FTavlaWinIndex: Integer;
+    FBatakWinIndex: Integer;
+    FPlaying: Boolean;
+    procedure SetPlaying(const Value: Boolean);
   protected
     procedure UpdateParent; virtual;
     procedure SetUserLevel(AValue: Integer); virtual;
@@ -158,6 +171,11 @@ type
     procedure SetUnlimited(AValue: Boolean); virtual;
     procedure SetDownload(AValue: Boolean); virtual;
     procedure SetOk(AValue: Boolean); virtual;
+    procedure SetGaming(AValue: Boolean); virtual;
+    procedure SetRanked(AValue: Boolean); virtual;
+    procedure SetGoodlatency(AValue: Boolean); virtual;
+    procedure SetHighlatency(AValue: Boolean); virtual;
+    procedure SetMeasuring(AValue: Boolean); virtual;
     procedure SetVideo(AValue: Boolean); virtual;
     procedure SetVoice(AValue: Boolean); virtual;
     procedure SetTrophy(AValue: Boolean); virtual;
@@ -166,6 +184,9 @@ type
     procedure SetCustomColor(AValue: Boolean); virtual;
     procedure SetIsBlocked(AValue: Boolean); virtual;
     procedure SetCustomIconIndex(AValue: Integer); virtual;
+    procedure SetCustomBIconIndex(AValue: Integer); virtual;
+    procedure SetTavlaWinIndex(AValue: Integer); virtual;
+    procedure SetBatakWinIndex(AValue: Integer); virtual;
   public
     function IsOverName(X: Integer): Boolean; virtual;
   published
@@ -179,6 +200,11 @@ type
     property Download: Boolean read FDownload write SetDownload;
     property Trophy: Boolean read FTrophy write SetTrophy;
     property Ok: Boolean read FOk write SetOk;
+    property Gaming: Boolean read FGaming write SetGaming;
+    property Ranked: Boolean read FRanked write SetRanked;
+    property Goodlatency: Boolean read FGoodlatency write SetGoodlatency;
+    property Highlatency: Boolean read FHighlatency write SetHighlatency;
+    property Measuring: Boolean read FMeasuring write SetMeasuring;
     property Video: Boolean read FVideo write SetVideo;
     property Voice: Boolean read FVoice write SetVoice;
     property TextColor: TColor read FTextColor write SetTextColor;
@@ -187,6 +213,9 @@ type
     property IsAfkSeparator: Boolean read FIsAfkSeparator;
     property IsBlocked: Boolean read FIsBlocked write SetIsBlocked;
     property CustomIconIndex: Integer read FCustomIconIndex write SetCustomIconIndex;
+    property CustomBIconIndex: Integer read FCustomBIconIndex write SetCustomBIconIndex;
+    property TavlaWinIndex: Integer read FTavlaWinIndex write SetTavlaWinIndex;
+    property BatakWinIndex: Integer read FBatakWinIndex write SetBatakWinIndex;
   end;
 
   (**
@@ -202,6 +231,9 @@ type
     FSorted: Boolean;
     FImageList: TImageList;
     FCustomImageList: TImageList;
+    FCustomBImageList: TImageList;
+    FTavlaWinIndex: TImageList;
+    FBatakWinIndex: TImageList;
     FMarginLeft: Integer;
     FMarginRight: Integer;
     FIconWidth: Integer;
@@ -233,6 +265,9 @@ type
   published
     property ImageList: TImageList read FImageList write FImageList;
     property CustomImageList: TImageList read FCustomImageList write FCustomImageList;
+    property CustomBImageList: TImageList read FCustomBImageList write FCustomBImageList;
+    property TavlaWinIndex: TImageList read FTavlaWinIndex write FTavlaWinIndex;
+    property BatakWinIndex: TImageList read FBatakWinIndex write FBatakWinIndex;
     property MarginLeft: Integer read FMarginLeft write SetMarginLeft;
     property MarginRight: Integer read FMarginRight write SetMarginRight;
     property IconWidth: Integer read FIconWidth write SetIconWidth;
@@ -278,54 +313,56 @@ const
    * Default color definition
    *)
   SIZE = 21;
-  TROPHY_COLOR: TColor = $00A4D5D3;
+  TROPHY_COLOR: TColor = clYellow;
+
   COLOR_NORMAL: array [0 .. SIZE] of ThpItemColors = (
-    (Border: clBlack;   Background: clBlack; Font: $0074D17B),       // Free
-    (Border: clBlack;   Background: clBlack; Font: clYellow),        // Gold
-    (Border: clBlack;   Background: clBlack; Font: clSilver),        // Platinum
-    (Border: clBlack;   Background: clBlack; Font: $00E9E9E9),       // Community leader
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // Trainee wizard
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // One star wizard
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // Two star wizard
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // Three star wizard
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // Trainee sage
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // One star sage
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // Two star sage
-    (Border: clBlack;   Background: clBlack; Font: clAqua),          // Three star sage
-    (Border: clBlack;   Background: clBlack; Font: $C6CCB4),         // Booster Member
-    (Border: clBlack;   Background: clBlack; Font: $00FFF9F3),       // League Coordinator
-    (Border: clBlack;   Background: clBlack; Font: $00FFF9F3),       // Even Host
-    (Border: $00FFF9F3; Background: clBlack; Font: $00FFF9F3),       // Even Host Coordinator
-    (Border: clAqua;    Background: clBlack; Font: clAqua),          // Captain
-    (Border: clAqua;    Background: clBlack; Font: clAqua),          // Volunteer Coordinator
-    (Border: clRed;     Background: clBlack; Font: clAqua),          // Representative
-    (Border: clInfoBk;  Background: clBlack; Font: clInfoBk),        // Site Partner
-    (Border: clWhite;   Background: clBlack; Font: $004A4AFF),       // Admin (Employee)
-    (Border: clBlack;   Background: clBlack; Font: clInactiveBorder) // Developer
+    (Border: clBlack;   Background: clBlack; Font: $0074D17B),        // Free
+    (Border: clBlack;   Background: clBlack; Font: clYellow),         // Plus
+    (Border: clYellow;  Background: clYellow; Font: clBlack),         // Celebrity
+    (Border: clBlack;   Background: clBlack; Font: $00FFFF),          // Team Mplayer
+    (Border: $C0C0C0;   Background: clBlack; Font: clRed),            // Mplayer Representative
+    (Border: clBlack;   Background: clBlack; Font: $00F1CAA6),        // Mplayer Employee
+    (Border: clBlack;   Background: clBlack; Font: $FF00FF),          // One star sage
+    (Border: clBlack;   Background: clBlack; Font: $FF00FF),          // Two star sage
+    (Border: clBlack;   Background: clBlack; Font: $FF00FF),          // Three star sage
+    (Border: clBlack;   Background: clBlack; Font: $C0C0C0),          // EBT captain
+    (Border: $FFFF00;   Background: clBlack; Font: $00FFFF),          // HearMe Volunteer
+    (Border: clBlack;   Background: clBlack; Font: $FEFCFF),          // Community Leader
+    (Border: clBlack;   Background: clBlack; Font: $9FD9E5),          // Wizard
+    (Border: clBlack;   Background: clBlack; Font: $FF00FF),          // Sage
+    (Border: clBlack;   Background: clBlack; Font: $9FD9E5),          // One Star wizard
+    (Border: clBlack;   Background: clBlack; Font: $9FD9E5),          // Two Star wizard
+    (Border: clBlack;   Background: clBlack; Font: $9FD9E5),          // Three Star wizard
+    (Border: $8F8F8F;   Background: clBlack; Font: $FF00FF),          // Mplayer Tech
+    (Border: $E2EC47;   Background: clBlack; Font: clRed),            // Mplayer GameGod
+    (Border: clBlack;   Background: clBlack; Font: clWhite),          // Even Host
+    (Border: $00FFF9F3; Background: clBlack; Font: clWhite),          // Even Host Coordinator
+    (Border: clBlack;   Background: clBlack; Font: clInactiveBorder)  // Developer
   );
+
   COLOR_SELECTED: array [0 .. SIZE] of ThpItemColors = (
-    (Border: clBlack;   Background: clNavy;  Font: $0074D17B),       // Free
-    (Border: clBlack;   Background: clNavy;  Font: clYellow),        // Gold
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // Platinum
-    (Border: clBlack;   Background: clNavy;  Font: clSilver),        // Community leader
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // Trainee wizard
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // One star wizard
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // Two star wizard
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // Three star wizard
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // Trainee sage
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // One star sage
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // Two star sage
-    (Border: clBlack;   Background: clNavy;  Font: clAqua),          // Three star sage
-    (Border: clBlack;   Background: clNavy;  Font: $C6CCB4),         // Booster Member
-    (Border: clBlack;   Background: clNavy;  Font: $00FFF9F3),       // League Coordinator
-    (Border: clBlack;   Background: clNavy;  Font: $00FFF9F3),       // Even Host
-    (Border: $00FFF9F3; Background: clNavy;  Font: $00FFF9F3),       // Even Host Coordinator
-    (Border: clAqua;    Background: clNavy;  Font: clAqua),          // Captain
-    (Border: clAqua;    Background: clNavy;  Font: clAqua),          // Volunteer Coordinator
-    (Border: clRed;     Background: clNavy;  Font: clAqua),          // Representative
-    (Border: clInfoBk;  Background: clNavy;  Font: clInfoBk),        // Site Partner
-    (Border: clWhite;   Background: clNavy;  Font: $004A4AFF),       // Admin (Employee)
-    (Border: clBlack;   Background: clNavy;  Font: clInactiveBorder) // Developer
+    (Border: clBlack;   Background: clNavy;  Font: $0074D17B),        // Free
+    (Border: clBlack;   Background: clNavy;  Font: clYellow),         // Plus
+    (Border: clBlack;   Background: clYellow;  Font: clBlack),        // Celebrity
+    (Border: clBlack;   Background: clNavy;  Font: $00FFFF),          // Team Mplayer
+    (Border: $C0C0C0;   Background: clNavy;  Font: clRed),            // Mplayer Representative
+    (Border: clWhite;   Background: clNavy;  Font: $00F1CAA6),        // Mplayer Employee
+    (Border: clBlack;   Background: clNavy;  Font: $FF00FF),          // One star sage
+    (Border: clBlack;   Background: clNavy;  Font: $FF00FF),          // Two star sage
+    (Border: clBlack;   Background: clNavy;  Font: $FF00FF),          // Three star sage
+    (Border: clBlack;   Background: clNavy;  Font: $C0C0C0),          // EBT captain
+    (Border: $FFFF00;   Background: clNavy;  Font: $00FFFF),          // HearMe Volunteer
+    (Border: clBlack;   Background: clNavy;  Font: $FEFCFF),          // Community Leader
+    (Border: clBlack;   Background: clNavy;  Font: $9FD9E5),          // Wizard
+    (Border: clBlack;   Background: clNavy;  Font: $FF00FF),          // Sage
+    (Border: clBlack;   Background: clNavy;  Font: $9FD9E5),          // One Star wizard
+    (Border: clBlack;   Background: clNavy;  Font: $9FD9E5),          // Two Star wizard
+    (Border: clBlack;   Background: clNavy;  Font: $9FD9E5),          // Three Star wizard
+    (Border: $8F8F8F;   Background: clNavy;  Font: $FF00FF),          // Mplayer Tech
+    (Border: $E2EC47;   Background: clNavy;  Font: clRed),            // Mplayer GameGod
+    (Border: clBlack;   Background: clNavy;  Font: clWhite),          // Even Host
+    (Border: $00FFF9F3; Background: clNavy;  Font: clWhite),          // Even Host Coordinator
+    (Border: clBlack;   Background: clNavy;  Font: clInactiveBorder)  // Developer
   );
 
 (**
@@ -340,31 +377,41 @@ end;
  * ChatSort custom sorts the stringlist containing the member items
  *)
 
+(**
+  My Sort order for names as follows
+
+  Volunteer staff members
+  Sages/wizard
+  5 three star
+  6 two star
+  7 one star
+**)
+
 function ChatSort(AList: TStringList; AIndex1, AIndex2: Integer): Integer;
 const
   USERLEVEL_TO_ORDER: array [0 .. SIZE] of Integer = (
-    20,  //  0 Free Account 12
-    12,  //  1 Gold Premium
-     8,  //  2 Platinum Premium *Lifetime*
-    10,  //  3 Community Leader
-     6,  //  4 Trainee Wizard
-     6,  //  5 One Star Wizard
-     6,  //  6 Two Star Wizard
-     6,  //  7 Three Star Wizard
-     5,  //  8 Trainee Sage
-     5,  //  9 One Star sage
-     5,  // 10 Two Star sage
-     5,  // 11 Three Star Sage
-    12,  // 12 Booster Member
-    12,  // 13 Trophy Winner
-     9,  // 14 Event Host
-     4,  // 15 Even Host Coordinator
-     3,  // 16 Captain
-     2,  // 17 Volunteer Coordinator
-     1,  // 18 Representative
-     7,  // 19 Site Partner
-     0,  // 20 CCO Admin
-    11); // 21 Developer
+    20,  //  0 Free *20
+    10,  //  1 Plus *12
+     9,  //  2 Celebrity *8
+     9,  //  3 Team Mplayer *10
+     1,  //  4 Mplayer Representative *6
+     0,  //  5 Mplayer Employee *6
+     6,  //  6 One Star Sage *6
+     5,  //  7 Two Star Sage *6
+     4,  //  8 Three Star Sage *5
+     9,  //  9 EBT Captain *5
+     3,  // 10 HearMe Volunteer *5
+     9,  // 11 Community Leader *5
+     7,  // 12 Wizard * 12
+     7,  // 13 Sage *12
+     6,  // 14 One Star Wizard *6
+     5,  // 15 Two Star Wizard *4
+     4,  // 16 Three Star Wizard *3
+     2,  // 17 Mplayer Tech *2
+     4,  // 18 Mplayer GameGod *1
+     8,  // 19 Even Host *7
+     2,  // 20 Even Host Coordinator *0
+    20); // 21 Developer *11
 var
   uli1, uli2: ThpChatListItem;
 begin
@@ -374,7 +421,7 @@ begin
     uli2 := ThpChatListItem(AList.Objects[AIndex2]);
 
     { Check AFK separator and AFK }
-    if uli1.Afk and uli2.FIsAfkSeparator then
+    {if uli1.Afk and uli2.FIsAfkSeparator then
       Result := 1
     else if uli2.Afk and uli1.FIsAfkSeparator then
       Result := -1
@@ -386,8 +433,8 @@ begin
       Result := 1
     else if uli2.Afk and not uli1.Afk then
       Result := -1
-    { Check community leader }
-    else if uli1.FCommunityLeader and not uli2.FCommunityLeader then
+    { Check community leader
+    else } if uli1.FCommunityLeader and not uli2.FCommunityLeader then
       Result := -1
     else if uli2.FCommunityLeader and not uli1.FCommunityLeader then
       Result := 1
@@ -495,6 +542,51 @@ begin
   end;
 end;
 
+procedure ThpChatListItem.SetGaming(AValue: Boolean);
+begin
+  if AValue <> FGaming then begin
+    FGaming := AValue;
+    UpdateParent;
+  end;
+end;
+
+procedure ThpChatListItem.SetRanked(AValue: Boolean);
+begin
+  if AValue <> FRanked then begin
+    FRanked := AValue;
+    UpdateParent;
+  end;
+end;
+
+procedure ThpChatListItem.SetGoodlatency(AValue: Boolean);
+begin
+  if AValue <> FGoodlatency then begin
+    FGoodlatency := AValue;
+    UpdateParent;
+  end;
+end;
+
+procedure ThpChatListItem.SetHighlatency(AValue: Boolean);
+begin
+  if AValue <> FHighlatency then begin
+    FHighlatency := AValue;
+    UpdateParent;
+  end;
+end;
+
+procedure ThpChatListItem.SetMeasuring(AValue: Boolean);
+begin
+  if AValue <> FMeasuring then begin
+    FMeasuring := AValue;
+    UpdateParent;
+  end;
+end;
+
+procedure ThpChatListItem.SetPlaying(const Value: Boolean);
+begin
+  FPlaying := Value;
+end;
+
 procedure ThpChatListItem.SetTrophy(AValue: Boolean);
 begin
   if AValue <> FTrophy then begin
@@ -559,6 +651,30 @@ begin
   end;
 end;
 
+procedure ThpChatListItem.SetCustomBIconIndex(AValue: Integer);
+begin
+  if AValue <> FCustomBIconIndex then begin
+    FCustomBIconIndex := AValue;
+    UpdateParent;
+  end;
+end;
+
+procedure ThpChatListItem.SetTavlaWinIndex(AValue: Integer);
+begin
+  if AValue <> FTavlaWinIndex then begin
+    FTavlaWinIndex := AValue;
+    UpdateParent;
+  end;
+end;
+
+procedure ThpChatListItem.SetBatakWinIndex(AValue: Integer);
+begin
+  if AValue <> FBatakWinIndex then begin
+    FBatakWinIndex := AValue;
+    UpdateParent;
+  end;
+end;
+
 function ThpChatListItem.IsOverName(X: Integer): Boolean;
 var
   left, right: Integer;
@@ -590,6 +706,24 @@ begin
     if FUnlimited then
       Inc(left, width);
 
+    if FGoodlatency then
+      Inc(left, width);
+
+    if FGaming then
+      Inc(left, width);
+
+    if FRanked then
+      Inc(left, width);
+
+    if FHighlatency then
+      Inc(left, width);
+
+    if FMeasuring then
+      Inc(left, width);
+
+    if FCommunityLeader then
+      Inc(left, width);
+
     if FTrophy or ((FUserLevel > 0) and (FParent.FImageList <> nil)) then
       Inc(left, width);
 
@@ -601,8 +735,7 @@ begin
   end;
 
   nameWidth := FParent.Canvas.TextWidth(FName);
-  if FTrophy or
-      ((COLOR_NORMAL[FUserLevel].Border <> COLOR_NORMAL[FUserLevel].Background) and not FCustomColor) or
+  if  (FTrophy) or ((COLOR_NORMAL[FUserLevel].Border <> COLOR_NORMAL[FUserLevel].Background) or (FUserLevel = 2) and not FCustomColor) or
       ((FBorderColor <> COLOR_NORMAL[FUserLevel].Background) and FCustomColor) then begin
     right := FParent.ClientWidth - FParent.FMarginRight - FParent.FIconMargin;
     Inc(left, (right - left - nameWidth) div 2);
@@ -782,7 +915,7 @@ var
   mode: Longint;
   textRect, borderRect: TRect;
 begin
-  if (csDestroying in ComponentState) or ListItems[Index].FIsAfkSeparator then
+  if (csDestroying in ComponentState) {or ListItems[Index].FIsAfkSeparator} then
     Exit;
 
   if FImageList <> nil then begin
@@ -800,54 +933,84 @@ begin
       try
         if FPaintMode = pmLegacy then begin
           if ThpChatListItem(Items.Objects[Index]).FAfk then begin
-            FImageList.GetBitmap(22, bmp);
+            FImageList.GetBitmap(24, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
             Inc(Rect.Left, width);
           end
           else if ThpChatListItem(Items.Objects[Index]).FOk then begin
-            FImageList.GetBitmap(23, bmp);
-            Canvas.Draw(Rect.Left, top, bmp);
-            Inc(Rect.Left, width);
-          end;
-
-          if ThpChatListItem(Items.Objects[Index]).FModerator then begin
-            FImageList.GetBitmap(24, bmp);
-            Canvas.Draw(Rect.Left, top, bmp);
-            Inc(Rect.Left, width);
-          end;
-
-          if ThpChatListItem(Items.Objects[Index]).FCoModerator then begin
-            FImageList.GetBitmap(25, bmp);
-            Canvas.Draw(Rect.Left, top, bmp);
-            Inc(Rect.Left, width);
-          end;
-
-          if ThpChatListItem(Items.Objects[Index]).FVideo then begin
             FImageList.GetBitmap(28, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
             Inc(Rect.Left, width);
           end;
 
-          if ThpChatListItem(Items.Objects[Index]).FVoice then begin
-            FImageList.GetBitmap(26, bmp);
+          if ThpChatListItem(Items.Objects[Index]).FCommunityLeader then begin
+            FImageList.GetBitmap(11, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FModerator then begin
+            FImageList.GetBitmap(29, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FCoModerator then begin
+            FImageList.GetBitmap(42, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FVideo then begin
+            FImageList.GetBitmap(40, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
             Inc(Rect.Left, width);
           end;
 
           if ThpChatListItem(Items.Objects[Index]).FUnlimited then begin
-            FImageList.GetBitmap(27, bmp);
+            FImageList.GetBitmap(26, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
             Inc(Rect.Left, width);
           end;
 
           if ThpChatListItem(Items.Objects[Index]).FDownload then begin
-            FImageList.GetBitmap(35, bmp);
+            FImageList.GetBitmap(25, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FGoodlatency then begin
+            FImageList.GetBitmap(27, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FHighlatency then begin
+            FImageList.GetBitmap(31, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FMeasuring then begin
+            FImageList.GetBitmap(36, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FGaming then begin
+            FImageList.GetBitmap(30, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+            Inc(Rect.Left, width);
+          end;
+
+          if ThpChatListItem(Items.Objects[Index]).FRanked then begin
+            FImageList.GetBitmap(21, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
             Inc(Rect.Left, width);
           end;
 
           if ThpChatListItem(Items.Objects[Index]).FTrophy then begin
-            FImageList.GetBitmap(30, bmp);
+            FImageList.GetBitmap(40, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
             Inc(Rect.Left, width);
           end
@@ -860,51 +1023,80 @@ begin
         else if FPaintMode = pmTwoIcons then begin
 
           { Moderator icon in column 1 }
-          if ThpChatListItem(Items.Objects[Index]).FCommunityLeader then begin
-            FImageList.GetBitmap(3, bmp);
+          {if ThpChatListItem(Items.Objects[Index]).FCommunityLeader then begin
+            FImageList.GetBitmap(11, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end
-          else if ThpChatListItem(Items.Objects[Index]).FModerator then begin
-            FImageList.GetBitmap(24, bmp);
+          else}if ThpChatListItem(Items.Objects[Index]).FModerator then begin
+            FImageList.GetBitmap(29, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end
           else if ThpChatListItem(Items.Objects[Index]).FCoModerator then begin
-            FImageList.GetBitmap(25, bmp);
+            FImageList.GetBitmap(42, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end
+          {else if ThpChatListItem(Items.Objects[Index]).FDownload then begin
+            FImageList.GetBitmap(25, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end}
           else if ThpChatListItem(Items.Objects[Index]).FOk then begin
-            FImageList.GetBitmap(23, bmp);
+            FImageList.GetBitmap(28, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FGaming then begin
+            FImageList.GetBitmap(30, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FRanked then begin
+            FImageList.GetBitmap(21, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FGoodlatency then begin
+            FImageList.GetBitmap(31, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FHighlatency then begin
+            FImageList.GetBitmap(27, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FMeasuring then begin
+            FImageList.GetBitmap(36, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FVideo then begin
+            FImageList.GetBitmap(40, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end;
           Inc(Rect.Left, width);
 
           { User information icons in column 2 }
-          if ThpChatListItem(Items.Objects[Index]).FAfk then begin
-            FImageList.GetBitmap(22, bmp);
+
+          if ThpChatListItem(Items.Objects[Index]).FCommunityLeader then begin
+            FImageList.GetBitmap(11, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FAfk then begin
+            FImageList.GetBitmap(24, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end
           else if ThpChatListItem(Items.Objects[Index]).FVoice then begin
             FImageList.GetBitmap(26, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end
-          else if ThpChatListItem(Items.Objects[Index]).FIsBlocked then begin
-            FImageList.GetBitmap(29, bmp);
-            Canvas.Draw(Rect.Left, top, bmp);
-          end
-          else if ThpChatListItem(Items.Objects[Index]).FVideo then begin
-            FImageList.GetBitmap(28, bmp);
-            Canvas.Draw(Rect.Left, top, bmp);
-          end
-          else if ThpChatListItem(Items.Objects[Index]).FUnlimited then begin
-            FImageList.GetBitmap(27, bmp);
-            Canvas.Draw(Rect.Left, top, bmp);
-          end
           else if ThpChatListItem(Items.Objects[Index]).FDownload then begin
-            FImageList.GetBitmap(35, bmp);
+            FImageList.GetBitmap(25, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FIsBlocked then begin
+            FImageList.GetBitmap(41, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end
           else if ThpChatListItem(Items.Objects[Index]).FTrophy then begin
-            FImageList.GetBitmap(30, bmp);
+            FImageList.GetBitmap(40, bmp);
+            Canvas.Draw(Rect.Left, top, bmp);
+          end
+          else if ThpChatListItem(Items.Objects[Index]).FUnlimited then begin
+            FImageList.GetBitmap(26, bmp);
             Canvas.Draw(Rect.Left, top, bmp);
           end
           else if (ThpChatListItem(Items.Objects[Index]).FCustomIconIndex > -1) and
@@ -944,7 +1136,16 @@ begin
           mode := DT_CENTER;
       end
       else if FTrophy then begin
+        Canvas.Brush.Color := clYellow;
         Canvas.Pen.Color := TROPHY_COLOR;
+        Canvas.Font.Color := clBlack;
+        Canvas.Brush.Style := bsSolid;
+        Canvas.Rectangle(borderRect);
+        mode := DT_CENTER;
+      end
+      else if (COLOR_NORMAL[FUserLevel].Background = clYellow) then
+      begin
+        Canvas.Pen.Color := COLOR_NORMAL[FUserLevel].Border;
         Canvas.Brush.Style := bsClear;
         Canvas.Rectangle(borderRect);
         mode := DT_CENTER;
@@ -979,12 +1180,13 @@ var
   sl: TStringList;
   user: string;
 begin
-  if not FHasAfkSeparator then begin
+  // REMOVED DUE TO MPLAYER NOT NEEDING IT BUT MAY BE REENABLED FOR OTHER PROJECTS.
+  {if not FHasAfkSeparator then begin
     with AddItem('') do
       FIsAfkSeparator := True;
 
     FHasAfkSeparator := True;
-  end;
+  end;}
 
   if ItemIndex > -1 then
     user := Items[ItemIndex]

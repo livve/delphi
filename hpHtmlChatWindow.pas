@@ -74,6 +74,7 @@ type
     property SystemFont: ThpFontSettings read FSystemFont write FSystemFont;
     property ConvertNewlines: Boolean read FConvertNewlines write FConvertNewlines;
     property OnClick;
+    property Constraints;
   end;
 
 procedure Register;
@@ -84,7 +85,7 @@ uses
   Windows, Controls, Dialogs, SysUtils;
 
 const
-  HTML_BR = '<br/>';
+  HTML_BR = '';
   HTML_STYLE_FONT = 'font-family:%s;font-size:%dpt;color:%s;';
   HTML_STYLE_BOLD = 'font-weight:bold;';
   HTML_STYLE_ITALIC = 'font-style:italic;';

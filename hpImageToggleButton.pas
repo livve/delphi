@@ -61,6 +61,7 @@ type
     property ParentShowHint;
     property ShowHint;
     property OnClick;
+    property Visible;
   end;
 
 procedure Register;

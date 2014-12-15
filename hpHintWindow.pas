@@ -1,15 +1,18 @@
 unit hpHintWindow;
 
 (**
- * @copyright Copyright (C) 2008-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2008-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Classes
  * @package   ThpHintWindow
- * @version   1.04
+ * @version   1.05
  *)
 
 (**
  * History
+ *
+ * V1.05
+ * - Added TextLine3
  *
  * V1.04 30/08/2010
  * - BUGFIX  Hint resize room user count text now also resizes hint.
@@ -63,6 +66,7 @@ type
     FLargeImageList: TImageList;
     FTextLine1: string;
     FTextLine2: string;
+    FTextLine3: string;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -86,6 +90,7 @@ type
     property LargeImageList: TImageList write FLargeImageList;
     property TextLine1: string read FTextLine1 write FTextLine1;
     property TextLine2: string read FTextLine2 write FTextLine2;
+    property TextLine3: string read FTextLine3 write FTextLine3;
   end;
 
 implementation
@@ -311,6 +316,8 @@ begin
         Max(Canvas.TextWidth(FTextLine1), Canvas.TextWidth(FTextLine1)));
       w := Max(w, FLargeIconSize + FMargin +
         Max(Canvas.TextWidth(FTextLine2), Canvas.TextWidth(FTextLine2)));
+      w := Max(w, FLargeIconSize + FMargin +
+        Max(Canvas.TextWidth(FTextLine3), Canvas.TextWidth(FTextLine3)));
       Inc(h, FMargin + FLargeIconSize);
     end;
 
@@ -345,9 +352,14 @@ begin
       SetRect(br, r.Left + FLargeIconSize + 2 * FMargin, r.Top + FMargin,
         r.Right, r.Bottom);
       DrawText(Canvas.Handle, PChar(FTextLine1), -1, br, DT_LEFT or DT_NOPREFIX);
+	  
       SetRect(br, r.Left + FLargeIconSize + 2 * FMargin,
         r.Top + 2 * FMargin + lh, r.Right, r.Bottom);
       DrawText(Canvas.Handle, PChar(FTextLine2), -1, br, DT_LEFT or DT_NOPREFIX);
+	  
+      SetRect(br, r.Left + FLargeIconSize + 2 * FMargin,
+        r.Top + 5 * FMargin + lh, r.Right, r.Bottom);
+      DrawText(Canvas.Handle, PChar(FTextLine3), -1, br, DT_LEFT or DT_NOPREFIX);
     except
     end;
 
