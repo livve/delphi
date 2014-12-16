@@ -1,12 +1,10 @@
-///	<summary>Defines a generic object list capable of sorting, searching,
-///	loading and saving custom classes</summary>
 unit hpGenericObjectList;
 
 (**
- * @copyright Copyright (C) 2011, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  hpClasses
- * @package   ThpGenericObjectList
+ * @category  VCL
+ * @package   hpGenericObjectList
  * @version   1.03
  *
  * @todo Introduce ThpCustomObjectList

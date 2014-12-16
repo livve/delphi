@@ -1,9 +1,9 @@
 unit hpInviteList;
 
 (**
- * @copyright Copyright (C) 2012-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2012-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  Classes
+ * @category  VCL
  * @package   hpInviteList
  * @version   1.00
  *)

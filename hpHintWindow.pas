@@ -3,7 +3,7 @@ unit hpHintWindow;
 (**
  * @copyright Copyright (C) 2008-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  Classes
+ * @category  VCL
  * @package   ThpHintWindow
  * @version   1.05
  *)

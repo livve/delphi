@@ -1,23 +1,9 @@
- {*********************************************************}
- {* Scruffy DeleteTimer for Delphi xe                     *}
- {* Version: 1.00                                         *}
- {*                                                       *}
- {* Copyright (c) 2010 by psd-designs.com                 *}
- {* All Rights Reserved.                                  *}
- {*********************************************************}
- {* CEO: Ron Allen                                        *}
- {* Lead Developers: Simon Lewis, Hans Pollaerts          *}
- {* Contact: sales@psd-designs.com                        *}
- {* Software Type: Open Source Component                  *}
- {* Updated Date: 21/10/2011                              *}
- {*********************************************************}
-
 unit hpDelTimer;
 
 (**
- * @copyright Copyright (C) 2010-2011, Hans Pollaerts
+ * @copyright Copyright (C) 2010-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  hpEngine
+ * @category  VCL
  * @package   hpDelTimer
  * @version   1.04
  *)
@@ -286,7 +272,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents('Scruffy SDK', [ThpDelTimer]);
+  RegisterComponents('hpVCL', [ThpDelTimer]);
 end;
 
 initialization

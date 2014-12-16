@@ -1,10 +1,10 @@
 unit hpMemo;
 
 (**
- * @copyright Copyright (C) 2011-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
- * @package   ThpMemo
+ * @package   hpMemo
  * @version   1.02
  *)
 

@@ -4,7 +4,7 @@ unit hpImageButton;
  * @copyright Copyright (C) 2011-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
- * @package   ThpImageButton
+ * @package   hpImageButton
  * @version   1.04
  *)
 

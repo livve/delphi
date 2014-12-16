@@ -5,11 +5,14 @@ unit hpChatListBox;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
  * @package   ThpChatListBox
- * @version   1.28
+ * @version   1.29
  *)
 
 (**
  * History
+ *
+ * V1.29 (2014-12-16)
+ * - Name check in AddItem
  *
  * V1.28
  * - Changes by Simon
@@ -852,13 +855,16 @@ function ThpChatListBox.AddItem(const AName: string): ThpChatListItem;
 var
   obj: ThpChatListItem;
 begin
-  obj := ThpChatListItem.Create(Self);
-  obj.FParent := Self;
-  obj.FName := AName;
-  obj.FCustomColor := False;
-  obj.CustomIconIndex := -1;
-  Items.AddObject(AName, obj);
-  obj.UpdateParent;
+  obj := GetItem(Items.IndexOf(AName));
+  if obj = nil then begin
+    obj := ThpChatListItem.Create(Self);
+    obj.FParent := Self;
+    obj.FName := AName;
+    obj.FCustomColor := False;
+    obj.CustomIconIndex := -1;
+    Items.AddObject(AName, obj);
+    obj.UpdateParent;
+  end;
   Result := obj;
 end;
 
@@ -878,7 +884,6 @@ begin
   obj.FTextColor := ATextColor;
   obj.FBorderColor := ABorderColor;
   obj.FCustomColor := True;
-  obj.CustomIconIndex := -1;
   obj.UpdateParent;
   Result := obj;
 end;

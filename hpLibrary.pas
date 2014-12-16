@@ -1,9 +1,9 @@
 unit hpLibrary;
 
 (**
- * @copyright Copyright (C) 2012-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2012-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  Functions
+ * @category  VCL
  * @package   hpLibrary
  * @version   1.01
  *)

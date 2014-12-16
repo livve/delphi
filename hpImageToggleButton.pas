@@ -1,10 +1,10 @@
 unit hpImageToggleButton;
 
 (**
- * @copyright Copyright (C) 2012-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2012-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
- * @package   ThpImageToggleButton
+ * @package   hpImageToggleButton
  * @version   1.00
  *)
 

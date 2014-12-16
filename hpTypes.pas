@@ -1,9 +1,9 @@
 unit hpTypes;
 
 (**
- * @copyright Copyright (C) 2011-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  Classes
+ * @category  VCL
  * @package   hpTypes
  * @version   1.00
  *)

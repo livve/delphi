@@ -1,10 +1,10 @@
 unit hpImageSpeedButton;
 
 (**
- * @copyright Copyright (C) 2011-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2014, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
- * @package   ThpImageSpeedButton
+ * @package   hpImageSpeedButton
  * @version   1.00
  *)
 

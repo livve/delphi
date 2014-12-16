@@ -1,5 +1,20 @@
 unit hpRoomInfo;
 
+(**
+ * @copyright Copyright (C) 2012-2014, Hans Pollaerts
+ * @author    Hans Pollaerts <pritaeas@gmail.com>
+ * @category  VCL
+ * @package   hpRoomInfo
+ * @version   1.00
+ *)
+
+(**
+ * History
+ *
+ * V1.00
+ * - Initial release
+ *)
+
 interface
 
 uses
