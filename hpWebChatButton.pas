@@ -154,7 +154,11 @@ end;
 
 procedure ThpWebChatButton.WMLButtonUp(var Message: TWMLButtonUp);
 begin
+  if not Enabled then
+    Exit;
+
   inherited;
+
   if FWebChatState = tsWeb then begin
     FWebChatState := tsChat;
   end
