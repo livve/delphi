@@ -22,7 +22,7 @@ uses
   Classes, Controls, ExtCtrls, Graphics, Messages;
 
 type
-  ThpWebChatState = (tsWeb, tsChat);
+  ThpWebChatState = (wcsWeb, wcsChat);
 
   ThpWebChatButton = class(TGraphicControl)
   private
@@ -81,7 +81,7 @@ begin
   Canvas.CopyMode := cmSrcCopy;
   FGlyph := TPicture.Create;
   FNumGlyphs := 3;
-  FWebChatState := tsChat;
+  FWebChatState := wcsWeb;
 
   Height := 34;
   Width := 36;
@@ -119,7 +119,7 @@ begin
       // show second image (web)
       srcImg := Rect(imgWidth, 0, 2 * imgWidth, imgHeight)
     else
-      if FWebChatState = tsWeb then begin
+      if FWebChatState = wcsWeb then begin
         if FNotify then
           // show third image (web + notify)
           srcImg := Rect(2 * imgWidth, 0, 3 * imgWidth, imgHeight)
@@ -137,7 +137,7 @@ end;
 
 procedure ThpWebChatButton.SetEnabled(Value: Boolean);
 begin
-  FWebChatState := tsWeb;
+  FWebChatState := wcsWeb;
   inherited;
 end;
 
@@ -170,11 +170,11 @@ begin
 
   inherited;
 
-  if FWebChatState = tsWeb then begin
-    FWebChatState := tsChat;
+  if FWebChatState = wcsWeb then begin
+    FWebChatState := wcsChat;
   end
   else
-    FWebChatState := tsWeb;
+    FWebChatState := wcsWeb;
 
   FNotify := False;
   Invalidate;
