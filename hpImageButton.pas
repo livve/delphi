@@ -1,15 +1,18 @@
 unit hpImageButton;
 
 (**
- * @copyright Copyright (C) 2011-2014, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
  * @package   hpImageButton
- * @version   1.04
+ * @version   1.05
  *)
 
 (**
  * History
+ *
+ * V1.05
+ * - Added UseShadowText
  *
  * V1.04
  * - Added TransparentGlyph
@@ -58,6 +61,7 @@ type
     FShadowColor: TColor;
     FNumGlyphs: Integer;
     FTransparentGlyph: Boolean;
+    FUseShadowText: Boolean;
     procedure SetTransparentGlyph(Value: Boolean);
   public
     constructor Create(AOwner: TComponent); override;
@@ -69,27 +73,29 @@ type
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure Paint; override;
     procedure SetGlyph(AValue: TPicture);
+    procedure SetUseShadowText(AValue: Boolean);
     procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
     procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
   published
     property Glyph: TPicture read FGlyph write SetGlyph;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
+    property ShadowColor: TColor read FShadowColor write FShadowColor;
+    property TransparentGlyph: Boolean read FTransparentGlyph write SetTransparentGlyph;
+    property UseShadowText: Boolean read FUseShadowText write SetUseShadowText;
     property Anchors;
     property AutoSize;
     property Caption;
-	property Cursor;
-    property TransparentGlyph: Boolean read FTransparentGlyph write SetTransparentGlyph;
+	  property Cursor;
     property Enabled;
     property Font;
     property Hint;
-    property ShadowColor: TColor read FShadowColor write FShadowColor;
     property ParentFont;
     property ParentShowHint;
     property ShowHint;
+    property Visible;
     property OnClick;
     property OnMouseUp;
     property OnMouseDown;
-    property Visible;
   end;
 
 procedure Register;
@@ -115,9 +121,10 @@ begin
   Canvas.CopyMode := cmSrcCopy;
   FGlyph := TPicture.Create;
   FMouseDown := False;
-  TransparentGlyph := True;
   FNumGlyphs := 2;
   FShadowColor := RGB(80, 80, 80);
+  FTransparentGlyph := True;
+  FUseShadowText := True;
 end;
 
 destructor ThpImageButton.Destroy;
@@ -130,6 +137,14 @@ procedure ThpImageButton.SetTransparentGlyph(Value: Boolean);
 begin
   FTransparentGlyph:= Value;
   Invalidate;
+end;
+
+procedure ThpImageButton.SetUseShadowText(AValue: Boolean);
+begin
+  if FUseShadowText <> AValue then begin
+    FUseShadowText := AValue;
+    Invalidate;
+  end;
 end;
 
 procedure ThpImageButton.LoadFromFile(const AFileName: string);
@@ -203,15 +218,18 @@ begin
     Canvas.Brush.Style := bsClear;
     Canvas.Font.Assign(Font);
 
-    oldColor := Canvas.Font.Color;
+    if FUseShadowText then begin
+      oldColor := Canvas.Font.Color;
 
-    shadowRect := dstText;
-    OffsetRect(shadowRect, 1, 1);
-    Canvas.Font.Color := FShadowColor;
-    DrawText(Canvas.Handle, PChar(Caption), Length(Caption), shadowRect,
-      DT_SINGLELINE or DT_VCENTER or DT_CENTER);
+      shadowRect := dstText;
+      OffsetRect(shadowRect, 1, 1);
+      Canvas.Font.Color := FShadowColor;
+      DrawText(Canvas.Handle, PChar(Caption), Length(Caption), shadowRect,
+        DT_SINGLELINE or DT_VCENTER or DT_CENTER);
 
-    Canvas.Font.Color := oldColor;
+      Canvas.Font.Color := oldColor;
+    end;
+
     DrawText(Canvas.Handle, PChar(Caption), Length(Caption), dstText,
       DT_SINGLELINE or DT_VCENTER or DT_CENTER);
   end;
