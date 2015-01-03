@@ -36,6 +36,7 @@ type
     procedure LoadFromFile(const AFileName: string);
   protected
     procedure Paint; override;
+    procedure SetEnabled(Value: Boolean); override;
     procedure SetGlyph(AValue: TPicture);
     procedure SetNotify(AValue: Boolean);
     procedure SetToggleState(AValue: ThpWebChatState);
@@ -79,7 +80,7 @@ begin
 
   Canvas.CopyMode := cmSrcCopy;
   FGlyph := TPicture.Create;
-  FNumGlyphs := 4;
+  FNumGlyphs := 3;
   FWebChatState := tsChat;
 
   Height := 34;
@@ -115,19 +116,29 @@ begin
     dstImg := Rect(0, 0, imgWidth, imgHeight);
 
     if not Enabled then
-      srcImg := Rect(3 * imgWidth, 0, 4 * imgWidth, imgHeight)
+      // show second image (web)
+      srcImg := Rect(imgWidth, 0, 2 * imgWidth, imgHeight)
     else
       if FWebChatState = tsWeb then begin
         if FNotify then
+          // show third image (web + notify)
           srcImg := Rect(2 * imgWidth, 0, 3 * imgWidth, imgHeight)
         else
+          // show second image (web)
           srcImg := Rect(imgWidth, 0, 2 * imgWidth, imgHeight)
       end
       else
+        // show first image (chat)
         srcImg := Rect(0, 0, imgWidth, imgHeight);
 
     Canvas.CopyRect(dstImg, FGlyph.Bitmap.Canvas, srcImg);
   end;
+end;
+
+procedure ThpWebChatButton.SetEnabled(Value: Boolean);
+begin
+  FWebChatState := tsWeb;
+  inherited;
 end;
 
 procedure ThpWebChatButton.SetGlyph(AValue: TPicture);
