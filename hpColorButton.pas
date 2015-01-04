@@ -24,6 +24,7 @@ uses
 type
   ThpColorButton = class(TGraphicControl)
   private
+    FBackgroundColor: TColor;
     FBorderColorDark: TColor;
     FBorderColorLight: TColor;
     FHighlightColor: TColor;
@@ -42,6 +43,7 @@ type
     procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
     procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
   published
+    property BackgroundColor: TColor read FBackgroundColor write FBackgroundColor;
     property BorderColorDark: TColor read FBorderColorDark write FBorderColorDark;
     property BorderColorLight: TColor read FBorderColorLight write FBorderColorLight;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
@@ -140,8 +142,8 @@ begin
   oldPenColor := Canvas.Pen.Color;
 
   Canvas.Brush.Style := bsSolid;
-  Canvas.Brush.Color := clGreen;
-  Canvas.Pen.Color := clGreen;
+  Canvas.Brush.Color := FBackgroundColor;
+  Canvas.Pen.Color := FBackgroundColor;
   Canvas.Rectangle(0, 0, Width, Height);
 
   if FMouseDown then
