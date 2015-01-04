@@ -102,7 +102,7 @@ end;
 procedure ThpWebChatButton.Paint;
 var
   srcImg, dstImg: TRect;
-  imgWidth, imgHeight, offsetX, offsetY: Integer;
+  imgWidth, imgHeight: Integer;
 begin
   if (csDestroying in ComponentState) then
     Exit;
@@ -110,8 +110,6 @@ begin
   if FGlyph.Graphic <> nil then begin
     imgWidth := FGlyph.Width div FNumGlyphs;
     imgHeight := FGlyph.Height;
-    offsetX := (Width - imgWidth) div 2;
-    offsetY := (Height - imgHeight) div 2;
 
     dstImg := Rect(0, 0, imgWidth, imgHeight);
 
