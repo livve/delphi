@@ -39,7 +39,9 @@ uses
   SysUtils;
 
 const
-  PortraitDivFormat = '<div class="portrait"><img src="%s" /><span>%s</span></div>';
+  HtmlPrefix = '<html><head><style>div.portrait { float: left; width: 128px; margin: 5px; } div.portrait p { text-align: center; }</style></head><body>';
+  HtmlPostfix = '</body></html>';
+  PortraitDivFormat = '<div class="portrait"><img src="%s" /><p>%s</p></div>';
 
 type
   ThpPortrait = class(TObject)
@@ -96,9 +98,13 @@ function ThpPortraitList.AsHtml: string;
 var
   i: Integer;
 begin
+  Result := HtmlPrefix;
+
   for i := 0 to FItems.Count - 1 do
     Result := Result + Format(PortraitDivFormat,
       [ThpPortrait(FItems.Objects[i]).Portrait, FItems[i]]);
+
+  Result := Result + HtmlPostfix;
 end;
 
 procedure ThpPortraitList.Clear;
