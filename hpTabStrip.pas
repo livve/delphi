@@ -32,7 +32,7 @@ type
     FHighlightColor: TColor;
     FNormalColor: TColor;
     FNumGlyphs: Integer;
-    FTabButtonState: ThpTabStripButtonState;
+    FTabStripButtonState: ThpTabStripButtonState;
     FTabStrip: ThpTabStrip;
   public
     constructor Create(AOwner: TComponent); override;
@@ -46,7 +46,7 @@ type
   published
     property Title: string read FTitle write SetTitle;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
-    property ToggleState: ThpTabStripButtonState read FTabButtonState write SetTabButtonState;
+    property TabStripButtonState: ThpTabStripButtonState read FTabStripButtonState write SetTabButtonState;
     property Font;
     property Hint;
     property ParentFont;
@@ -142,7 +142,7 @@ begin
 
     dstImg := Rect(0, 0, imgWidth, imgHeight);
 
-    if FTabButtonState = tbsSelected then
+    if FTabStripButtonState = tbsSelected then
       srcImg := Rect(imgWidth, 0, 2 * imgWidth, imgHeight)
     else
       srcImg := Rect(0, 0, imgWidth, imgHeight);
@@ -169,8 +169,8 @@ end;
 
 procedure ThpTabStripButton.SetTabButtonState(AValue: ThpTabStripButtonState);
 begin
-  if AValue <> FTabButtonState then begin
-    FTabButtonState := AValue;
+  if AValue <> FTabStripButtonState then begin
+    FTabStripButtonState := AValue;
     Invalidate;
   end;
 end;
@@ -178,10 +178,10 @@ end;
 procedure ThpTabStripButton.WMLButtonUp(var Message: TWMLButtonUp);
 begin
   inherited;
-  if FTabButtonState = tbsSelected then
+  if FTabStripButtonState = tbsSelected then
     Exit;
 
-  FTabButtonState := tbsSelected;
+  FTabStripButtonState := tbsSelected;
   Invalidate;
 
   FTabStrip.UpdateTabs(Self);
@@ -213,7 +213,7 @@ var
 begin
   tab := ThpTabStripButton.Create(Self);
   if ControlCount = 0 then
-    tab.FTabButtonState := tbsSelected;
+    tab.FTabStripButtonState := tbsSelected;
 
   tab.Title := ATitle;
   tab.HighlightColor := FHighlightColor;
@@ -297,7 +297,7 @@ begin
       title := Sender.Title;
     end
     else if Controls[i] is ThpTabStripButton then
-      (Controls[i] as ThpTabStripButton).FTabButtonState := tbsUnselected;
+      (Controls[i] as ThpTabStripButton).TabStripButtonState := tbsUnselected;
 
   if (idx > -1) and Assigned(FOnTabChanged) then
     FOnTabChanged(idx, title);
