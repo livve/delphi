@@ -70,7 +70,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure AddTab(const ATitle: string); virtual;
+    procedure AddTab(const ATitle, AHint: string); virtual;
     procedure DeleteTab(AIndex: Integer); virtual;
     procedure LoadFromFile(const AFileName: string); virtual;
     procedure RenameTab(AIndex: Integer; const ATitle: string); virtual;
@@ -207,7 +207,7 @@ begin
   inherited;
 end;
 
-procedure ThpTabStrip.AddTab(const ATitle: string);
+procedure ThpTabStrip.AddTab(const ATitle, AHint: string);
 var
   tab: ThpTabStripButton;
 begin
@@ -215,9 +215,12 @@ begin
   if ControlCount = 0 then
     tab.FTabStripButtonState := tbsSelected;
 
-  tab.Title := ATitle;
+
   tab.HighlightColor := FHighlightColor;
+  tab.Hint := AHint;
   tab.Parent := Self;
+  tab.Title := ATitle;
+  tab.ShowHint := AHint > '';
 
   if FGlyph <> nil then begin
     tab.Left := (ControlCount - 1) * (FGlyph.Width div 2);
