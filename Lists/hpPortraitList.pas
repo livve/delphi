@@ -3,7 +3,7 @@ unit hpPortraitList;
 (**
  * @copyright Copyright (C) 2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  VCL
+ * @category  Lists
  * @package   hpPortraitList
  * @version   1.00
  *)
