@@ -3,7 +3,7 @@ unit hpColorButton;
 (**
  * @copyright Copyright (C) 2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  VCL
+ * @category  Buttons
  * @package   hpColorButton
  * @version   1.00
  *)
