@@ -1,9 +1,9 @@
 unit hpDelTimer;
 
 (**
- * @copyright Copyright (C) 2010-2014, Hans Pollaerts
+ * @copyright Copyright (C) 2010-2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  VCL
+ * @category  Timers
  * @package   hpDelTimer
  * @version   1.04
  *)
