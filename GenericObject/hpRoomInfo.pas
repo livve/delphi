@@ -1,9 +1,9 @@
 unit hpRoomInfo;
 
 (**
- * @copyright Copyright (C) 2012-2014, Hans Pollaerts
+ * @copyright Copyright (C) 2012-2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  VCL
+ * @category  GenericObject
  * @package   hpRoomInfo
  * @version   1.00
  *)

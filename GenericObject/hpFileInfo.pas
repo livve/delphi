@@ -1,10 +1,10 @@
-unit hpBlockedUserInfo;
+unit hpFileInfo;
 
 (**
- * @copyright Copyright (C) 2012-2014, Hans Pollaerts
+ * @copyright Copyright (C) 2012-2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  VCL
- * @package   hpBlockedUserInfo
+ * @category  GenericObject
+ * @package   hpFileInfo
  * @version   1.00
  *)
 
@@ -23,9 +23,9 @@ uses
 
 type
   ///	<summary>RoomInfo class for use with the ThpGenericObjectList</summary>
-  ThpBlockeduserInfo = class(ThpGenericObject)
+  ThpFileInfo = class(ThpGenericObject)
   private
-    FImageIndex: String;
+    FProgress, FFileSize, FFileTo: String;
   protected
     procedure AssignTo(ADestination: TPersistent); override;
     procedure DefineProperties(AFiler: TFiler); override;
@@ -39,9 +39,14 @@ type
     ///	<value>Item identifier</value>
     property Name: string read FIdentifier;
 
-    ///	<summary>ImageIndex of the icon</summary>
-    property ImageIndex: String read FImageIndex write FImageIndex;
+    ///	<summary>Population of the room</summary>
+    property Progress: String read FProgress write FProgress;
 
+    ///	<summary>Latency of the room</summary>
+    property FileSize: String read FFileSize write FFileSize;
+
+    ///	<summary>Comment of the room</summary>
+    property FileTo: String read FFileTo write FFileTo;
   end;
 
 implementation
@@ -49,54 +54,64 @@ implementation
 uses
   SysUtils;
 
-{ ThpBlockeduserInfo }
+{ ThpFileInfo }
 
-///	<summary>Initializes an instance of ThpBlockeduserInfo</summary>
-constructor ThpBlockeduserInfo.Create;
+///	<summary>Initializes an instance of ThpFileInfo</summary>
+constructor ThpFileInfo.Create;
 begin
   inherited;
-  FImageIndex := '0';
+  FProgress := '';
+  FFileSize := '';
+  FFileTo := '';
 end;
 
 ///	<summary>Add additional properties to a list item</summary>
 ///	<param name="AListItem">List item to add to</param>
-procedure ThpBlockeduserInfo.GetSubItems(AListItem: TListItem);
+procedure ThpFileInfo.GetSubItems(AListItem: TListItem);
 begin
-  AListItem.ImageIndex := StrToInt(FImageIndex);
+  AListItem.SubItems.Add(FProgress);
+  AListItem.SubItems.Add(FFileSize);
+  AListItem.SubItems.Add(FFileTo);
 end;
 
 ///	<summary>Assign this object's properties to another instance</summary>
 ///	<param name="ADestination">The object to copy to</param>
-procedure ThpBlockeduserInfo.AssignTo(ADestination: TPersistent);
+procedure ThpFileInfo.AssignTo(ADestination: TPersistent);
 begin
   inherited;
-  if ADestination is ThpBlockeduserInfo then begin
-    ThpBlockeduserInfo(ADestination).FImageIndex := FImageIndex;
+  if ADestination is ThpFileInfo then begin
+    ThpFileInfo(ADestination).FProgress := FProgress;
+    ThpFileInfo(ADestination).FFileSize := FFileSize;
+    ThpFileInfo(ADestination).FFileTo := FFileTo;
   end;
 end;
 
 ///	<summary>Define the object's properties using a filer object</summary>
 ///	<param name="AFiler">The filer to use</param>
-procedure ThpBlockeduserInfo.DefineProperties(AFiler: TFiler);
+procedure ThpFileInfo.DefineProperties(AFiler: TFiler);
 begin
   inherited;
-  AFiler.DefineProperty('BlockeduserInfo', ReadData, WriteData, True);
+  AFiler.DefineProperty('FileInfo', ReadData, WriteData, True);
 end;
 
 ///	<summary>Read the object's properties from a reader object</summary>
 ///	<param name="AReader">The reader to read from</param>
-procedure ThpBlockeduserInfo.ReadData(AReader: TReader);
+procedure ThpFileInfo.ReadData(AReader: TReader);
 begin
   inherited;
-  FImageIndex := AReader.ReadString;
+  FProgress := AReader.ReadString;
+  FFileSize := AReader.ReadString;
+  FFileTo := AReader.ReadString;
 end;
 
 ///	<summary>Write the object's properties to a writer object</summary>
 ///	<param name="AWriter">The writer to write to</param>
-procedure ThpBlockeduserInfo.WriteData(AWriter: TWriter);
+procedure ThpFileInfo.WriteData(AWriter: TWriter);
 begin
   inherited;
-  AWriter.WriteStr(FImageIndex);
+  AWriter.WriteStr(FProgress);
+  AWriter.WriteStr(FFileSize);
+  AWriter.WriteStr(FFileTo);
 end;
 
 end.

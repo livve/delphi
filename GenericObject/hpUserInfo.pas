@@ -1,9 +1,9 @@
 unit hpUserInfo;
 
 (**
- * @copyright Copyright (C) 2011-2014, Hans Pollaerts
+ * @copyright Copyright (C) 2011-2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
- * @category  VCL
+ * @category  GenericObject
  * @package   hpUserInfo
  * @version   1.00
  *)
