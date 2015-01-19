@@ -5,11 +5,14 @@ unit hpPortraitList;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Lists
  * @package   hpPortraitList
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
+ *
+ * V1.01 2015-01-19
+ * - Updated to simplify sub-classing.
  *
  * V1.00 2015-01-05
  * - Initial release
@@ -21,8 +24,16 @@ uses
   Classes;
 
 type
+  ThpPortrait = class(TObject)
+  protected
+    FPortrait: string;
+  public
+    constructor Create(const APortrait: string); virtual;
+    property Portrait: string read FPortrait write FPortrait;
+  end;
+
   ThpPortraitList = class(TObject)
-  private
+  protected
     FItems: TStringList;
   public
     constructor Create; virtual;
@@ -31,6 +42,7 @@ type
     function AsHtml: string; virtual;
     procedure Clear; virtual;
     procedure Delete(const AUser: string); virtual;
+    function Find(const AUser: string): ThpPortrait; virtual;
   end;
 
 implementation
@@ -42,15 +54,6 @@ const
   HtmlPrefix = '<html><head><style>div.portrait { float: left; width: 128px; margin: 5px; } div.portrait p { text-align: center; }</style></head><body>';
   HtmlPostfix = '</body></html>';
   PortraitDivFormat = '<div class="portrait"><img src="%s" /><p>%s</p></div>';
-
-type
-  ThpPortrait = class(TObject)
-  private
-    FPortrait: string;
-  public
-    constructor Create(const APortrait: string); virtual;
-    property Portrait: string read FPortrait write FPortrait;
-  end;
 
 (* ThpPortrait *)
 
@@ -83,11 +86,12 @@ end;
 
 procedure ThpPortraitList.Add(const AUser, APortrait: string);
 var
+  hpPortrait: ThpPortrait;
   i: Integer;
 begin
-  i := FItems.IndexOf(AUser);
-  if i > -1 then
-    ThpPortrait(FItems.Objects[i]).Portrait := APortrait
+  hpPortrait := Find(AUser);
+  if hpPortrait <> nil then
+    hpPortrait.Portrait := APortrait
   else begin
     i := FItems.Add(AUser);
     FItems.Objects[i] := ThpPortrait.Create(APortrait);
@@ -126,6 +130,16 @@ begin
     FItems.Objects[i].Free;
     FItems.Delete(i);
   end;
+end;
+
+function ThpPortraitList.Find(const AUser: string): ThpPortrait;
+var
+  i: Integer;
+begin
+  Result := nil;
+  i := FItems.IndexOf(AUser);
+  if i > -1 then
+    Result := ThpPortrait(FItems.Objects[i]);
 end;
 
 end.
