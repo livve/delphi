@@ -1,5 +1,7 @@
 ### TODO
 
+    [ ] Update wiki
+
 ### IN PROGRESS
 
 ### DONE
