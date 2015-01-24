@@ -1,11 +1,11 @@
 unit hpDelTimer;
 
 (**
- * @copyright Copyright (C) 2010-2015, Hans Pollaerts
+ * @copyright Copyright (C) 2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Timers
  * @package   hpDelTimer
- * @version   1.04
+ * @version   1.00
  *)
 
 (**
@@ -21,7 +21,6 @@ uses
   Classes, Controls, ExtCtrls, Contnrs;
 
 type
-
   (*
    * ThpDelTimer interface
    *)
@@ -38,7 +37,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Add(const ARoom: string = '');
-    function IsPedningDeletion(const ARoom: string): Boolean;
+    function IsPendingDeletion(const ARoom: string): Boolean;
     procedure ClearRoom(const ARoom: string);
     procedure LoadFromFile(const AFileName: string);
     procedure SaveToFile(const AFileName: string);
@@ -54,7 +53,6 @@ uses
   SysUtils;
 
 type
-
   (*
    * ThpDelTimerItem interface
    *)
@@ -121,10 +119,6 @@ begin
   inherited;
 end;
 
-(*
- * Check for expired kicks and remove them from the list
- *)
-
 procedure ThpDelTimer.TimerInterval(Sender: TObject);
 var
   i: Integer;
@@ -147,11 +141,6 @@ begin
     Enabled := True;
 end;
 
-(*
- * Add a kicked user/room combination to the list
- * Additionally start the timer if it is not already active
- *)
-
 procedure ThpDelTimer.Add(const ARoom: string = '');
 begin
   FDelItems.Add(ThpDelTimerItem.Create(ARoom));
@@ -159,11 +148,7 @@ begin
     Enabled := True;
 end;
 
-(*
- * Check if a user has been kicked
- * Returns true if the user is found, false otherwise
- *)
-function ThpDelTimer.IsPedningDeletion(const ARoom: string): Boolean;
+function ThpDelTimer.IsPendingDeletion(const ARoom: string): Boolean;
 var
   i: Integer;
 begin

@@ -1,7 +1,7 @@
 unit hpKickTimer;
 
 (**
- * @copyright Copyright (C) 2010-2015, Hans Pollaerts
+ * @copyright Copyright (C) 2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Timers
  * @package   hpKickTimer
@@ -33,11 +33,9 @@ uses
   Classes, Controls, ExtCtrls, Contnrs;
 
 type
-
   (*
    * ThpKickTimer interface
    *)
-
   ThpKickTimer = class(TTimer)
   protected
     FKickItems: TObjectList;
@@ -68,11 +66,9 @@ uses
   SysUtils;
 
 type
-
   (*
    * ThpKickItem interface
    *)
-   
   ThpKickItem = class(TPersistent)
   protected
     FUser: string;
@@ -143,7 +139,6 @@ end;
 (*
  * Check for expired kicks and remove them from the list
  *)
-
 procedure ThpKickTimer.TimerInterval(Sender: TObject);
 var
   i: Integer;
@@ -170,7 +165,6 @@ end;
  * Add a kicked user/room combination to the list
  * Additionally start the timer if it is not already active
  *)
-
 procedure ThpKickTimer.Add(const AUser: string; const ARoom: string = '');
 begin
   FKickItems.Add(ThpKickItem.Create(AUser, ARoom));
@@ -313,7 +307,6 @@ end;
 (**
  * Register into the component palette
  *)
-
 procedure Register;
 begin
   RegisterComponents('hpVCL', [ThpKickTimer]);
@@ -322,9 +315,9 @@ end;
 initialization
 
   RegisterClass(ThpKickItem);
-  
+
 finalization
-  
+
   UnRegisterClass(ThpKickItem);
 
 end.
