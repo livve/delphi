@@ -1,17 +1,17 @@
 unit hpRichEdit;
 
 (**
- * @copyright Copyright (C) 2010-2013, Hans Pollaerts
+ * @copyright Copyright (C) 2015, Hans Pollaerts
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
  * @package   hpRichEdit
- * @version   1.04
+ * @version   1.05
  *)
 
 (**
  * History
  *
- * 1.05       30/08/2010
+ * 1.05       2010-08-30
  *            Added additional procedure to handle room adverts and settings.
  *
  * 1.04       2010-04-27
@@ -401,12 +401,11 @@ var
   iColor, iSize: Integer;
   sFont: string;
 begin
-if Length(text) > 0 then begin
+  if Length(text) > 0 then begin
     sFont := 'Tahoma';
     iColor := 0;
     iSize := 0;
 
-   // for n := 1 to Length(Text) do begin
     for n := 1 to Length(Text) - 1 do begin
       SelStart := n;
 
