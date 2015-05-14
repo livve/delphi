@@ -5,11 +5,15 @@ unit hpWebChatButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpWebChatButton
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
+ *
+ * V1.01 2015-05-14
+ * - Seperated into two buttons.
+ * - Added JPEG support.
  *
  * V1.00 2015-01-03
  * - Copy of ThpImageToggleButton
@@ -34,6 +38,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure LoadFromFile(const AFileName: string);
+    procedure LoadFromJpegFile(const AFileName: string);
   protected
     procedure Paint; override;
     procedure SetEnabled(Value: Boolean); override;
@@ -62,7 +67,7 @@ procedure Register;
 implementation
 
 uses
-  Dialogs, Math, Types, Windows;
+  Dialogs, Jpeg, Math, Types, Windows;
 
 (**
  * Register into the component palette
@@ -97,6 +102,19 @@ procedure ThpWebChatButton.LoadFromFile(const AFileName: string);
 begin
   FGlyph.LoadFromFile(AFileName);
   Invalidate;
+end;
+
+procedure ThpWebChatButton.LoadFromJpegFile(const AFileName: string);
+var
+  jpeg: TJpegImage;
+begin
+  jpeg := TJpegImage.Create();
+  jpeg.LoadFromFile(AFileName);
+
+  FGlyph.Bitmap.Assign(jpeg);
+  Invalidate;
+
+  jpeg.Free;
 end;
 
 procedure ThpWebChatButton.Paint;
@@ -162,15 +180,23 @@ begin
 end;
 
 procedure ThpWebChatButton.WMLButtonUp(var Message: TWMLButtonUp);
+var
+  halfWidth: Integer;
+  mousePos: TPoint;
 begin
   if not Enabled then
     Exit;
 
+  halfWidth := Width div 2;
+  mousePos := ScreenToClient(Mouse.CursorPos);
+  if ((FWebChatState = wcsChat) and (mousePos.X >= halfWidth)) or
+     ((FWebChatState = wcsWeb) and (mousePos.X < halfWidth)) then
+    Exit;
+
   inherited;
 
-  if FWebChatState = wcsWeb then begin
-    FWebChatState := wcsChat;
-  end
+  if FWebChatState = wcsWeb then
+    FWebChatState := wcsChat
   else
     FWebChatState := wcsWeb;
 
