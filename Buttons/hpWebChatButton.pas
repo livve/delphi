@@ -14,6 +14,7 @@ unit hpWebChatButton;
  * V1.01 2015-05-14
  * - Seperated into two buttons.
  * - Added JPEG support.
+ * - Added OnButtonChanged event.
  *
  * V1.00 2015-01-03
  * - Copy of ThpImageToggleButton
@@ -34,6 +35,7 @@ type
     FNotify: Boolean;
     FNumGlyphs: Integer;
     FWebChatState: ThpWebChatState;
+    FOnButtonChanged: TNotifyEvent;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -50,6 +52,7 @@ type
     property Glyph: TPicture read FGlyph write SetGlyph;
     property Notify: Boolean read FNotify write SetNotify;
     property ToggleState: ThpWebChatState read FWebChatState write SetToggleState;
+    property OnButtonChanged: TNotifyEvent read FOnButtonChanged write FOnButtonChanged;
     property Anchors;
     property AutoSize;
     property Caption;
@@ -184,11 +187,18 @@ var
   halfWidth: Integer;
   mousePos: TPoint;
 begin
+  inherited;
+
   if not Enabled then
     Exit;
 
   halfWidth := Width div 2;
   mousePos := ScreenToClient(Mouse.CursorPos);
+
+  if (mousePos.X < 0) or (mousePos.Y < 0) or
+     (mousePos.X > Width) or (mousePos.Y > Height) then
+    Exit;
+
   if ((FWebChatState = wcsChat) and (mousePos.X >= halfWidth)) or
      ((FWebChatState = wcsWeb) and (mousePos.X < halfWidth)) then
     Exit;
@@ -201,7 +211,8 @@ begin
   FNotify := False;
   Invalidate;
 
-  inherited;
+  if Assigned(FOnButtonChanged) then
+    FOnButtonChanged(Self);
 end;
 
 end.
