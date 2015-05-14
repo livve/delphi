@@ -5,11 +5,14 @@ unit hpImageToggleButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpImageToggleButton
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
+ *
+ * V1.01 2015-05-14
+ * - Added JPEG support.
  *
  * V1.00 2012-03-21
  * - Copy of ThpImageButton
@@ -37,6 +40,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure LoadFromFile(const AFileName: string);
+    procedure LoadFromJpegFile(const AFileName: string);
   protected
     procedure AdjustSize; override;
     procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
@@ -69,7 +73,7 @@ procedure Register;
 implementation
 
 uses
-  Dialogs, Math, Types, Windows;
+  Dialogs, Jpeg, Math, Types, Windows;
 
 (**
  * Register into the component palette
@@ -100,6 +104,19 @@ procedure ThpImageToggleButton.LoadFromFile(const AFileName: string);
 begin
   FGlyph.LoadFromFile(AFileName);
   Invalidate;
+end;
+
+procedure ThpImageToggleButton.LoadFromJpegFile(const AFileName: string);
+var
+  jpeg: TJpegImage;
+begin
+  jpeg := TJpegImage.Create();
+  jpeg.LoadFromFile(AFileName);
+
+  FGlyph.Bitmap.Assign(jpeg);
+  Invalidate;
+
+  jpeg.Free;
 end;
 
 procedure ThpImageToggleButton.AdjustSize;

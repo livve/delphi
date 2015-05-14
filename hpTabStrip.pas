@@ -5,13 +5,16 @@ unit hpTabStrip;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
  * @package   hpTabStrip
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
  *
- * V.90 2015-01-07
+ * V1.01 2015-05-14
+ * - Added JPEG support.
+ *
+ * V1.00 2015-01-07
  * - Initial release
  *)
 
@@ -73,6 +76,7 @@ type
     procedure AddTab(const ATitle, AHint: string); virtual;
     procedure DeleteTab(AIndex: Integer); virtual;
     procedure LoadFromFile(const AFileName: string); virtual;
+    procedure LoadFromJpegFile(const AFileName: string); virtual;
     procedure RenameTab(AIndex: Integer; const ATitle: string); virtual;
   published
     property Glyph: TPicture read FGlyph write SetGlyph;
@@ -88,7 +92,7 @@ procedure Register;
 implementation
 
 uses
-  Dialogs, Math, Types, Windows, StdCtrls, Forms;
+  Dialogs, Jpeg, Math, Types, Windows, StdCtrls, Forms;
 
 (**
  * Register into the component palette
@@ -241,6 +245,19 @@ procedure ThpTabStrip.LoadFromFile(const AFileName: string);
 begin
   FGlyph.LoadFromFile(AFileName);
   UpdateTabPositions(nil);
+end;
+
+procedure ThpTabStrip.LoadFromJpegFile(const AFileName: string);
+var
+  jpeg: TJpegImage;
+begin
+  jpeg := TJpegImage.Create();
+  jpeg.LoadFromFile(AFileName);
+
+  FGlyph.Bitmap.Assign(jpeg);
+  Invalidate;
+
+  jpeg.Free;
 end;
 
 procedure ThpTabStrip.RenameTab(AIndex: Integer; const ATitle: string);

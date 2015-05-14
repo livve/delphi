@@ -5,13 +5,16 @@ unit hpImageSpeedButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpImageSpeedButton
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
  *
- * V1.00 13/12/2011
+ * V1.01 2015-05-14
+ * - Added JPEG support.
+ *
+ * V1.00 2011-12-13
  * - Initial release
  *)
 
@@ -54,6 +57,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure LoadFromFile(const AFileName: string);
+    procedure LoadFromJpegFile(const AFileName: string);
     procedure ButtonClick;
   protected
     FState: ThpImageBtnButtonState;
@@ -93,6 +97,9 @@ procedure Register;
 
 implementation
 
+uses
+  Jpeg;
+
 (**
  * Register into the component palette
  *)
@@ -122,6 +129,19 @@ procedure ThpImageSpeedButton.LoadFromFile(const AFileName: string);
 begin
   FGlyph.LoadFromFile(AFileName);
   Invalidate;
+end;
+
+procedure ThpImageSpeedButton.LoadFromJpegFile(const AFileName: string);
+var
+  jpeg: TJpegImage;
+begin
+  jpeg := TJpegImage.Create();
+  jpeg.LoadFromFile(AFileName);
+
+  FGlyph.Bitmap.Assign(jpeg);
+  Invalidate;
+
+  jpeg.Free;
 end;
 
 procedure ThpImageSpeedButton.AdjustSize;

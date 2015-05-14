@@ -5,11 +5,14 @@ unit hpImageButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpImageButton
- * @version   1.05
+ * @version   1.06
  *)
 
 (**
  * History
+ *
+ * V1.06 2015-05-14
+ * - Added JPEG support.
  *
  * V1.05
  * - Added UseShadowText
@@ -67,6 +70,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure LoadFromFile(const AFileName: string);
+    procedure LoadFromJpegFile(const AFileName: string);
   protected
     procedure AdjustSize; override;
     procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
@@ -103,7 +107,7 @@ procedure Register;
 implementation
 
 uses
-  Dialogs, Math, Types, Windows;
+  Dialogs, Jpeg, Math, Types, Windows;
 
 (**
  * Register into the component palette
@@ -151,6 +155,19 @@ procedure ThpImageButton.LoadFromFile(const AFileName: string);
 begin
   FGlyph.LoadFromFile(AFileName);
   Invalidate;
+end;
+
+procedure ThpImageButton.LoadFromJpegFile(const AFileName: string);
+var
+  jpeg: TJpegImage;
+begin
+  jpeg := TJpegImage.Create();
+  jpeg.LoadFromFile(AFileName);
+
+  FGlyph.Bitmap.Assign(jpeg);
+  Invalidate;
+
+  jpeg.Free;
 end;
 
 procedure ThpImageButton.AdjustSize;
