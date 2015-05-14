@@ -193,8 +193,6 @@ begin
      ((FWebChatState = wcsWeb) and (mousePos.X < halfWidth)) then
     Exit;
 
-  inherited;
-
   if FWebChatState = wcsWeb then
     FWebChatState := wcsChat
   else
@@ -202,6 +200,8 @@ begin
 
   FNotify := False;
   Invalidate;
+
+  inherited;
 end;
 
 end.

@@ -72,7 +72,10 @@ type
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   published
+    property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp default False;
+    property Down: Boolean read FDown write SetDown default False;
     property Glyph: TPicture read FGlyph write SetGlyph;
+    property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
     property Anchors;
     property AutoSize;
@@ -88,9 +91,6 @@ type
     property OnMouseUp;
     property OnMouseDown;
     property Visible;
-    property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
-    property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp default False;
-    property Down: Boolean read FDown write SetDown default False;
   end;
 
 procedure Register;
