@@ -82,6 +82,7 @@ type
     property Glyph: TPicture read FGlyph write SetGlyph;
     property HighlightColor: TColor read FHighlightColor write SetHighlightColor;
     property OnTabChanged: ThpTabChangedEvent read FOnTabChanged write FOnTabChanged;
+    property Anchors;
     property Font;
     property ParentFont;
     property Visible;
