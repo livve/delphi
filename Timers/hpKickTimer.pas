@@ -11,20 +11,20 @@ unit hpKickTimer;
 (**
  * History
  *
- * 1.04       2011-07-08
- *            Added IsKickedUser
+ * V1.04 2011-07-08
+ * - Added IsKickedUser
  *
- * 1.03       2011-07-08
- *            Added ClearUser
+ * V1.03 2011-07-08
+ * - Added ClearUser
  *
- * 1.02	      2011-06-06
- *            LoadFromFile/SaveToFile
+ * V1.02 2011-06-06
+ * - LoadFromFile/SaveToFile
  *
- * 1.01       2011-03-09
- *            Room delete
+ * V1.01 2011-03-09
+ * - Room delete
  *
- * 1.00       2010-03-02
- *            Initial implementation (untested)
+ * V1.00 2010-03-02
+ * - Initial release (untested)
  *)
 
 interface

@@ -11,8 +11,8 @@ unit hpDelTimer;
 (**
  * History
  *
- * 1.00       21/10/2011
- *            Initial implementation (untested)
+ * V1.00 2011-10-21
+ * - Initial release (untested)
  *)
 
 interface

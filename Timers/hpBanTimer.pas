@@ -11,8 +11,8 @@ unit hpBanTimer;
 (**
  * History
  *
- * 1.00       2010-03-02
- *            Initial implementation (copy of ThpKickTimer)
+ * V1.00 2010-03-02
+ * - Initial release (copy of ThpKickTimer)
  *)
 
 interface
