@@ -5,11 +5,14 @@ unit hpImageToggleButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpImageToggleButton
- * @version   1.01
+ * @version   1.02
  *)
 
 (**
  * History
+ *
+ * V1.02 2015-05-17
+ * - Introduced custom base class
  *
  * V1.01 2015-05-14
  * - Added JPEG support.
@@ -23,12 +26,16 @@ unit hpImageToggleButton;
 interface
 
 uses
-  Classes, Controls, ExtCtrls, Graphics, Messages;
+  Classes, Controls, ExtCtrls, Graphics, Messages,
+  hpCustomButton;
 
 type
   ThpToggleState = (tsFirst, tsSecond);
 
-  ThpImageToggleButton = class(TGraphicControl)
+  (**
+   * ThpImageToggleButton interface
+   *)
+  ThpImageToggleButton = class(ThpCustomButton)
   private
     FGlyph: TPicture;
     FHighlightColor: TColor;
@@ -54,18 +61,6 @@ type
     property Glyph: TPicture read FGlyph write SetGlyph;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
     property ToggleState: ThpToggleState read FToggleState write SetToggleState;
-    property Anchors;
-    property AutoSize;
-    property Caption;
-    property Cursor;
-    property Enabled;
-    property Font;
-    property Hint;
-    property ParentFont;
-    property ParentShowHint;
-    property ShowHint;
-    property OnClick;
-    property Visible;
   end;
 
 procedure Register;
@@ -83,7 +78,9 @@ begin
   RegisterComponents('hpVCL', [ThpImageToggleButton]);
 end;
 
-(* ThpImageToggleButton *)
+(**
+ * ThpImageToggleButton implementation
+ *)
 
 constructor ThpImageToggleButton.Create(AOwner: TComponent);
 begin

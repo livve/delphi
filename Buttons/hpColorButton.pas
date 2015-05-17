@@ -5,11 +5,14 @@ unit hpColorButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpColorButton
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
+ *
+ * V1.01 2015-05-17
+ * - Introduced custom base class
  *
  * V1.00 2015-01-04
  * - Copy of ThpImageButton
@@ -19,10 +22,14 @@ unit hpColorButton;
 interface
 
 uses
-  Classes, Controls, ExtCtrls, Graphics, Messages;
+  Classes, Controls, ExtCtrls, Graphics, Messages,
+  hpCustomButton;
 
 type
-  ThpColorButton = class(TGraphicControl)
+  (**
+   * ThpColorButton interface
+   *)
+  ThpColorButton = class(ThpCustomButton)
   private
     FBackgroundColor: TColor;
     FBorderColorDark: TColor;
@@ -49,20 +56,6 @@ type
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
     property ShadowColor: TColor read FShadowColor write FShadowColor;
     property UseShadowText: Boolean read FUseShadowText write SetUseShadowText;
-    property Anchors;
-    property AutoSize;
-    property Caption;
-    property Cursor;
-    property Enabled;
-    property Font;
-    property Hint;
-    property ParentFont;
-    property ParentShowHint;
-    property ShowHint;
-    property Visible;
-    property OnClick;
-    property OnMouseUp;
-    property OnMouseDown;
   end;
 
 procedure Register;
@@ -80,7 +73,9 @@ begin
   RegisterComponents('hpVCL', [ThpColorButton]);
 end;
 
-(* ThpColorButton *)
+(**
+ * ThpColorButton implementation
+ *)
 
 constructor ThpColorButton.Create(AOwner: TComponent);
 begin

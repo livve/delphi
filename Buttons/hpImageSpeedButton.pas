@@ -5,11 +5,14 @@ unit hpImageSpeedButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpImageSpeedButton
- * @version   1.01
+ * @version   1.02
  *)
 
 (**
  * History
+ *
+ * V1.02 2015-05-17
+ * - Introduced custom base class
  *
  * V1.01 2015-05-14
  * - Added JPEG support.
@@ -21,15 +24,16 @@ unit hpImageSpeedButton;
 interface
 
 uses
-  SysUtils, Dialogs, Math, Types, Classes, Controls, Windows, ExtCtrls, Graphics, Messages;
-
+  SysUtils, Dialogs, Math, Types, Classes, Controls, Windows, ExtCtrls,
+  Graphics, Messages,
+  hpCustomButton;
 
 type
   TCMButtonPressed = record
     Msg: Cardinal;
     Index: Integer;
     {$IFDEF COMPILER16_UP}
-	WParamFiller: TDWordFiller;
+	  WParamFiller: TDWordFiller;
     {$ENDIF COMPILER16_UP}
     Control: TControl;
     Result: LRESULT;
@@ -37,7 +41,11 @@ type
 
 type
   ThpImageBtnButtonState = (rbsUp, rbsDown, rbsExclusive);
-  ThpImageSpeedButton = class(TGraphicControl)
+
+  (**
+   * ThpImageSpeedButton interface
+   *)
+  ThpImageSpeedButton = class(ThpCustomButton)
   private
     FGlyph: TPicture;
     FHighlightColor: TColor;
@@ -70,27 +78,13 @@ type
     procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
   published
     property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp default False;
     property Down: Boolean read FDown write SetDown default False;
     property Glyph: TPicture read FGlyph write SetGlyph;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
-    property Anchors;
-    property AutoSize;
-    property Caption;
-   	property Cursor;
-    property Enabled;
-    property Font;
-    property Hint;
-    property ParentFont;
-    property ParentShowHint;
-    property ShowHint;
-    property OnClick;
-    property OnMouseUp;
-    property OnMouseDown;
-    property Visible;
   end;
 
 procedure Register;
@@ -108,7 +102,9 @@ begin
   RegisterComponents('hpVCL', [ThpImageSpeedButton]);
 end;
 
-(* ThpImageSpeedButton *)
+(**
+ * ThpImageSpeedButton implementation
+ *)
 
 constructor ThpImageSpeedButton.Create(AOwner: TComponent);
 begin
@@ -374,7 +370,8 @@ begin
    end;
 end;
 
-procedure ThpImageSpeedButton.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure ThpImageSpeedButton.MouseUp(Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
 begin
   inherited MouseUp(Button, Shift, X, Y);
   DoMouseUp(Button, Shift, X, Y);
@@ -385,7 +382,7 @@ procedure ThpImageSpeedButton.DoMouseUp(Button: TMouseButton; Shift: TShiftState
 var
   DoClick: Boolean;
 begin
-if DoClick then
+  if DoClick then
     begin
       SetDown(not FDown);
       if FDown then

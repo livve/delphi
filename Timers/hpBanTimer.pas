@@ -5,11 +5,14 @@ unit hpBanTimer;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Timers
  * @package   hpBanTimer
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
+ *
+ * V1.01 2015-05-17
+ * - Introduced custom base class
  *
  * V1.00 2010-03-02
  * - Initial release (copy of ThpKickTimer)
@@ -18,16 +21,17 @@ unit hpBanTimer;
 interface
 
 uses
-  Classes, Controls, ExtCtrls, Contnrs;
+  Classes, Controls, ExtCtrls, Contnrs,
+  hpCustomTimer;
 
 type
-  ThpBanTimer = class(TTimer)
+  (**
+   * ThpBanTimer interface
+   *)
+  ThpBanTimer = class(ThpCustomTimer)
   protected
-    FBanItems: TObjectList;
-    procedure TimerInterval(Sender: TObject); virtual;
+    procedure TimerInterval(Sender: TObject); override;
   public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
     procedure Add(const AItem: string; ADate: TDateTime);
     function IsBanned(const AItem: string): Boolean;
     procedure ClearItem(const AItem: string);
@@ -45,6 +49,9 @@ uses
   SysUtils;
 
 type
+  (**
+   * ThpBanItem interface
+   *)
   ThpBanItem = class(TPersistent)
   protected
     FItem: string;
@@ -57,6 +64,10 @@ type
     property Item: string read FItem write FItem;
     property Date: TDateTime read FDate write FDate;
   end;
+
+(**
+ * ThpBanItem implementation
+ *)
 
 constructor ThpBanItem.Create(const AItem: string; ADate: TDateTime);
 begin
@@ -81,24 +92,11 @@ begin
   end;
 end;
 
-constructor ThpBanTimer.Create(AOwner: TComponent);
-begin
-  inherited;
-  FBanItems := TObjectList.Create(true);
-  OnTimer := TimerInterval;
-  // check the list every minute
-  Interval := 60000;
-  Enabled := False;
-end;
+(**
+ * ThpBanTimer implementation
+ *)
 
-destructor ThpBanTimer.Destroy;
-begin
-  FBanItems.Clear;
-  FBanItems.Free;
-  inherited;
-end;
-
-(*
+(**
  * Check for expired bans and remove them from the list
  *)
 procedure ThpBanTimer.TimerInterval(Sender: TObject);
@@ -108,16 +106,16 @@ begin
   // stop the timer while processing
   Enabled := False;
 
-  i := FBanItems.Count - 1;
+  i := FItems.Count - 1;
   while i > -1 do begin
-    if Now > ThpBanItem(FBanItems[i]).Date then
-      FBanItems.Delete(i);
+    if Now > ThpBanItem(FItems[i]).Date then
+      FItems.Delete(i);
 
     Dec(i);
   end;
 
   // enable the timer only if there are items in the list
-  if FBanItems.Count > 0 then
+  if FItems.Count > 0 then
     Enabled := True;
 end;
 
@@ -127,7 +125,7 @@ end;
  *)
 procedure ThpBanTimer.Add(const AItem: string; ADate: TDateTime);
 begin
-  FBanItems.Add(ThpBanItem.Create(AItem, ADate));
+  FItems.Add(ThpBanItem.Create(AItem, ADate));
   if not Enabled then
     Enabled := True;
 end;
@@ -141,8 +139,8 @@ var
   i: Integer;
 begin
   Result := False;
-  for i := 0 to FBanItems.Count - 1 do
-    if ThpBanItem(FBanItems[i]).FItem = AItem then begin
+  for i := 0 to FItems.Count - 1 do
+    if ThpBanItem(FItems[i]).FItem = AItem then begin
       Result := True;
       Break;
     end;
@@ -152,9 +150,9 @@ procedure ThpBanTimer.ClearItem(const AItem: string);
 var
   i: Integer;
 begin
-  for i := FBanItems.Count - 1 downto 0 do
-    if (ThpBanItem(FBanItems[i]).FItem = AItem) then
-      FBanItems.Delete(i);
+  for i := FItems.Count - 1 downto 0 do
+    if (ThpBanItem(FItems[i]).FItem = AItem) then
+      FItems.Delete(i);
 end;
 
 procedure ThpBanTimer.LoadFromFile(const AFileName: string);
@@ -188,7 +186,7 @@ var
   ctype: TPersistentClass;
   cname: string;
 begin
-  FBanItems.Clear;
+  FItems.Clear;
   reader := TReader.Create(AStream, $FF);
   try
     with reader do begin
@@ -206,7 +204,7 @@ begin
             obj.Free;
             raise;
           end;
-          FBanItems.Add(obj);
+          FItems.Add(obj);
         end;
       end;
       ReadListEnd;
@@ -226,10 +224,10 @@ begin
     with writer do begin
       WriteSignature;
       WriteListBegin;
-      for i := 0 to FBanItems.Count - 1 do begin
-        if TObject(FBanItems[i]) is ThpBanItem then begin
-          WriteString(TPersistent(FBanItems[i]).ClassName);
-          ThpBanItem(FBanItems[i]).WriteData(writer);
+      for i := 0 to FItems.Count - 1 do begin
+        if TObject(FItems[i]) is ThpBanItem then begin
+          WriteString(TPersistent(FItems[i]).ClassName);
+          ThpBanItem(FItems[i]).WriteData(writer);
         end;
       end;
       WriteListEnd;

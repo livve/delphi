@@ -5,11 +5,14 @@ unit hpImageButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpImageButton
- * @version   1.06
+ * @version   1.07
  *)
 
 (**
  * History
+ *
+ * V1.07 2015-05-17
+ * - Introduced custom base class
  *
  * V1.06 2015-05-14
  * - Added JPEG support.
@@ -52,10 +55,14 @@ unit hpImageButton;
 interface
 
 uses
-  Classes, Controls, ExtCtrls, Graphics, Messages;
+  Classes, Controls, ExtCtrls, Graphics, Messages,
+  hpCustomButton;
 
 type
-  ThpImageButton = class(TGraphicControl)
+  (**
+   * ThpImageButton interface
+   *)
+  ThpImageButton = class(ThpCustomButton)
   private
     FGlyph: TPicture;
     FHighlightColor: TColor;
@@ -86,20 +93,6 @@ type
     property ShadowColor: TColor read FShadowColor write FShadowColor;
     property TransparentGlyph: Boolean read FTransparentGlyph write SetTransparentGlyph;
     property UseShadowText: Boolean read FUseShadowText write SetUseShadowText;
-    property Anchors;
-    property AutoSize;
-    property Caption;
-	  property Cursor;
-    property Enabled;
-    property Font;
-    property Hint;
-    property ParentFont;
-    property ParentShowHint;
-    property ShowHint;
-    property Visible;
-    property OnClick;
-    property OnMouseUp;
-    property OnMouseDown;
   end;
 
 procedure Register;
@@ -117,7 +110,9 @@ begin
   RegisterComponents('hpVCL', [ThpImageButton]);
 end;
 
-(* ThpImageButton *)
+(**
+ * ThpImageButton implementation
+ *)
 
 constructor ThpImageButton.Create(AOwner: TComponent);
 begin

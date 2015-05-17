@@ -5,11 +5,14 @@ unit hpWebChatButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpWebChatButton
- * @version   1.01
+ * @version   1.02
  *)
 
 (**
  * History
+ *
+ * V1.02 2015-05-17
+ * - Introduced custom base class
  *
  * V1.01 2015-05-14
  * - Seperated into two buttons.
@@ -24,12 +27,16 @@ unit hpWebChatButton;
 interface
 
 uses
-  Classes, Controls, ExtCtrls, Graphics, Messages;
+  Classes, Controls, ExtCtrls, Graphics, Messages,
+  hpCustomButton;
 
 type
   ThpWebChatState = (wcsWeb, wcsChat);
 
-  ThpWebChatButton = class(TGraphicControl)
+  (**
+   * ThpWebChatButton interface
+   *)
+  ThpWebChatButton = class(ThpCustomButton)
   private
     FGlyph: TPicture;
     FNotify: Boolean;
@@ -53,16 +60,6 @@ type
     property Notify: Boolean read FNotify write SetNotify;
     property ToggleState: ThpWebChatState read FWebChatState write SetToggleState;
     property OnButtonChanged: TNotifyEvent read FOnButtonChanged write FOnButtonChanged;
-    property Anchors;
-    property AutoSize;
-    property Caption;
-    property Cursor;
-    property Enabled;
-    property Hint;
-    property ParentShowHint;
-    property ShowHint;
-    property OnClick;
-    property Visible;
   end;
 
 procedure Register;
@@ -80,7 +77,9 @@ begin
   RegisterComponents('hpVCL', [ThpWebChatButton]);
 end;
 
-(* ThpWebChatButton *)
+(**
+ * ThpWebChatButton implementation
+ *)
 
 constructor ThpWebChatButton.Create(AOwner: TComponent);
 begin

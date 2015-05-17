@@ -5,11 +5,14 @@ unit hpDelTimer;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Timers
  * @package   hpDelTimer
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
+ *
+ * V1.01 2015-05-17
+ * - Introduced custom base class
  *
  * V1.00 2011-10-21
  * - Initial release (untested)
@@ -18,24 +21,22 @@ unit hpDelTimer;
 interface
 
 uses
-  Classes, Controls, ExtCtrls, Contnrs;
+  Classes, Controls, ExtCtrls, Contnrs,
+  hpCustomTimer;
 
 type
-  (*
+  (**
    * ThpDelTimer interface
    *)
-
-  ThpDelTimer = class(TTimer)
+  ThpDelTimer = class(ThpCustomTimer)
   protected
-    FDelItems: TObjectList;
     FDeleteDuration: Integer;
-    procedure TimerInterval(Sender: TObject); virtual;
+    procedure TimerInterval(Sender: TObject); override;
   published
     // Duration of a delete in minutes, defaults to 5
     property DeleteDuration: Integer read FDeleteDuration write FDeleteDuration default 5;
   public
     constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
     procedure Add(const ARoom: string = '');
     function IsPendingDeletion(const ARoom: string): Boolean;
     procedure ClearRoom(const ARoom: string);
@@ -53,10 +54,9 @@ uses
   SysUtils;
 
 type
-  (*
+  (**
    * ThpDelTimerItem interface
    *)
-
   ThpDelTimerItem = class(TPersistent)
   protected
     FRoom: string;
@@ -104,19 +104,7 @@ end;
 constructor ThpDelTimer.Create(AOwner: TComponent);
 begin
   inherited;
-  FDelItems := TObjectList.Create(true);
-  OnTimer := TimerInterval;
-  // check the list every minute
   FDeleteDuration := 120;
-  Interval := 60000;
-  Enabled := False;
-end;
-
-destructor ThpDelTimer.Destroy;
-begin
-  FDelItems.Clear;
-  FDelItems.Free;
-  inherited;
 end;
 
 procedure ThpDelTimer.TimerInterval(Sender: TObject);
@@ -127,23 +115,23 @@ begin
   // stop the timer while processing
   Enabled := False;
 
-  i := FDelItems.Count - 1;
+  i := FItems.Count - 1;
   while i > -1 do begin
-    timediff := Round((Now - ThpDelTimerItem(FDelItems[i]).FDate) * 1440);
+    timediff := Round((Now - ThpDelTimerItem(FItems[i]).FDate) * 1440);
     if timediff > FDeleteDuration then
-      FDelItems.Delete(i);
+      FItems.Delete(i);
 
     Dec(i);
   end;
 
   // enable the timer only if there are items in the list
-  if FDelItems.Count > 0 then
+  if FItems.Count > 0 then
     Enabled := True;
 end;
 
 procedure ThpDelTimer.Add(const ARoom: string = '');
 begin
-  FDelItems.Add(ThpDelTimerItem.Create(ARoom));
+  FItems.Add(ThpDelTimerItem.Create(ARoom));
   if not Enabled then
     Enabled := True;
 end;
@@ -153,8 +141,8 @@ var
   i: Integer;
 begin
   Result := False;
-  for i := 0 to FDelItems.Count - 1 do
-    if ThpDelTimerItem(FDelItems[i]).FRoom = ARoom then begin
+  for i := 0 to FItems.Count - 1 do
+    if ThpDelTimerItem(FItems[i]).FRoom = ARoom then begin
       Result := True;
       Break;
     end;
@@ -164,9 +152,9 @@ procedure ThpDelTimer.ClearRoom(const ARoom: string);
 var
   i: Integer;
 begin
-  for i := FDelItems.Count - 1 downto 0 do
-    if (ThpDelTimerItem(FDelItems[i]).FRoom = ARoom) then
-      FDelItems.Delete(i);
+  for i := FItems.Count - 1 downto 0 do
+    if (ThpDelTimerItem(FItems[i]).FRoom = ARoom) then
+      FItems.Delete(i);
 end;
 
 procedure ThpDelTimer.LoadFromFile(const AFileName: string);
@@ -200,7 +188,7 @@ var
   ctype: TPersistentClass;
   cname: string;
 begin
-  FDelItems.Clear;
+  FItems.Clear;
   reader := TReader.Create(AStream, $FF);
   try
     with reader do begin
@@ -218,7 +206,7 @@ begin
             obj.Free;
             raise;
           end;
-          FDelItems.Add(obj);
+          FItems.Add(obj);
         end;
       end;
       ReadListEnd;
@@ -238,10 +226,10 @@ begin
     with writer do begin
       WriteSignature;
       WriteListBegin;
-      for i := 0 to FDelItems.Count - 1 do begin
-        if TObject(FDelItems[i]) is ThpDelTimerItem then begin
-          WriteString(TPersistent(FDelItems[i]).ClassName);
-          ThpDelTimerItem(FDelItems[i]).WriteData(writer);
+      for i := 0 to FItems.Count - 1 do begin
+        if TObject(FItems[i]) is ThpDelTimerItem then begin
+          WriteString(TPersistent(FItems[i]).ClassName);
+          ThpDelTimerItem(FItems[i]).WriteData(writer);
         end;
       end;
       WriteListEnd;

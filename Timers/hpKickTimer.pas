@@ -5,11 +5,14 @@ unit hpKickTimer;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Timers
  * @package   hpKickTimer
- * @version   1.04
+ * @version   1.05
  *)
 
 (**
  * History
+ *
+ * V1.05 2015-05-17
+ * - Introduced custom base class
  *
  * V1.04 2011-07-08
  * - Added IsKickedUser
@@ -30,23 +33,22 @@ unit hpKickTimer;
 interface
 
 uses
-  Classes, Controls, ExtCtrls, Contnrs;
+  Classes, Controls, ExtCtrls, Contnrs,
+  hpCustomTimer;
 
 type
-  (*
+  (**
    * ThpKickTimer interface
    *)
-  ThpKickTimer = class(TTimer)
+  ThpKickTimer = class(ThpCustomTimer)
   protected
-    FKickItems: TObjectList;
     FKickDuration: Integer;
-    procedure TimerInterval(Sender: TObject); virtual;
+    procedure TimerInterval(Sender: TObject); override;
   published
     // Duration of a kick in minutes, defaults to 5
     property KickDuration: Integer read FKickDuration write FKickDuration default 5;
   public
     constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
     procedure Add(const AUser: string; const ARoom: string = '');
     function IsKicked(const AUser, ARoom: string): Boolean;
     function IsKickedUser(const AUser: string): Boolean;
@@ -66,7 +68,7 @@ uses
   SysUtils;
 
 type
-  (*
+  (**
    * ThpKickItem interface
    *)
   ThpKickItem = class(TPersistent)
@@ -121,19 +123,7 @@ end;
 constructor ThpKickTimer.Create(AOwner: TComponent);
 begin
   inherited;
-  FKickItems := TObjectList.Create(true);
-  OnTimer := TimerInterval;
-  // check the list every minute
   FKickDuration := 120;
-  Interval := 60000;
-  Enabled := False;
-end;
-
-destructor ThpKickTimer.Destroy;
-begin
-  FKickItems.Clear;
-  FKickItems.Free;
-  inherited;
 end;
 
 (*
@@ -147,17 +137,17 @@ begin
   // stop the timer while processing
   Enabled := False;
 
-  i := FKickItems.Count - 1;
+  i := FItems.Count - 1;
   while i > -1 do begin
-    timediff := Round((Now - ThpKickItem(FKickItems[i]).FDate) * 1440);
+    timediff := Round((Now - ThpKickItem(FItems[i]).FDate) * 1440);
     if timediff > FKickDuration then
-      FKickItems.Delete(i);
+      FItems.Delete(i);
 
     Dec(i);
   end;
 
   // enable the timer only if there are items in the list
-  if FKickItems.Count > 0 then
+  if FItems.Count > 0 then
     Enabled := True;
 end;
 
@@ -167,7 +157,7 @@ end;
  *)
 procedure ThpKickTimer.Add(const AUser: string; const ARoom: string = '');
 begin
-  FKickItems.Add(ThpKickItem.Create(AUser, ARoom));
+  FItems.Add(ThpKickItem.Create(AUser, ARoom));
   if not Enabled then
     Enabled := True;
 end;
@@ -181,8 +171,8 @@ var
   i: Integer;
 begin
   Result := False;
-  for i := 0 to FKickItems.Count - 1 do
-    if (ThpKickItem(FKickItems[i]).FUser = AUser) and (ThpKickItem(FKickItems[i]).FRoom = ARoom) then begin
+  for i := 0 to FItems.Count - 1 do
+    if (ThpKickItem(FItems[i]).FUser = AUser) and (ThpKickItem(FItems[i]).FRoom = ARoom) then begin
       Result := True;
       Break;
     end;
@@ -197,8 +187,8 @@ var
   i: Integer;
 begin
   Result := False;
-  for i := 0 to FKickItems.Count - 1 do
-    if ThpKickItem(FKickItems[i]).FUser = AUser then begin
+  for i := 0 to FItems.Count - 1 do
+    if ThpKickItem(FItems[i]).FUser = AUser then begin
       Result := True;
       Break;
     end;
@@ -208,18 +198,18 @@ procedure ThpKickTimer.ClearRoom(const ARoom: string);
 var
   i: Integer;
 begin
-  for i := FKickItems.Count - 1 downto 0 do
-    if (ThpKickItem(FKickItems[i]).FRoom = ARoom) then
-      FKickItems.Delete(i);
+  for i := FItems.Count - 1 downto 0 do
+    if (ThpKickItem(FItems[i]).FRoom = ARoom) then
+      FItems.Delete(i);
 end;
 
 procedure ThpKickTimer.ClearUser(const AUser: string);
 var
   i: Integer;
 begin
-  for i := FKickItems.Count - 1 downto 0 do
-    if (ThpKickItem(FKickItems[i]).FUser = AUser) then
-      FKickItems.Delete(i);
+  for i := FItems.Count - 1 downto 0 do
+    if (ThpKickItem(FItems[i]).FUser = AUser) then
+      FItems.Delete(i);
 end;
 
 procedure ThpKickTimer.LoadFromFile(const AFileName: string);
@@ -253,7 +243,7 @@ var
   ctype: TPersistentClass;
   cname: string;
 begin
-  FKickItems.Clear;
+  FItems.Clear;
   reader := TReader.Create(AStream, $FF);
   try
     with reader do begin
@@ -271,7 +261,7 @@ begin
             obj.Free;
             raise;
           end;
-          FKickItems.Add(obj);
+          FItems.Add(obj);
         end;
       end;
       ReadListEnd;
@@ -291,10 +281,10 @@ begin
     with writer do begin
       WriteSignature;
       WriteListBegin;
-      for i := 0 to FKickItems.Count - 1 do begin
-        if TObject(FKickItems[i]) is ThpKickItem then begin
-          WriteString(TPersistent(FKickItems[i]).ClassName);
-          ThpKickItem(FKickItems[i]).WriteData(writer);
+      for i := 0 to FItems.Count - 1 do begin
+        if TObject(FItems[i]) is ThpKickItem then begin
+          WriteString(TPersistent(FItems[i]).ClassName);
+          ThpKickItem(FItems[i]).WriteData(writer);
         end;
       end;
       WriteListEnd;

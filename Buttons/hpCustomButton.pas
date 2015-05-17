@@ -21,9 +21,25 @@ uses
   Controls;
 
 type
+  (**
+   * ThpCustomButton interface
+   *)
   ThpCustomButton = class(TGraphicControl)
   published
-
+    property Anchors;
+    property AutoSize;
+    property Caption;
+    property Cursor;
+    property Enabled;
+    property Font;
+    property Hint;
+    property OnClick;
+    property OnMouseUp;
+    property OnMouseDown;
+    property ParentFont;
+    property ParentShowHint;
+    property ShowHint;
+    property Visible;
   end;
 
 implementation
