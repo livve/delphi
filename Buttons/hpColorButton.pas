@@ -5,11 +5,14 @@ unit hpColorButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpColorButton
- * @version   1.01
+ * @version   1.02
  *)
 
 (**
  * History
+ *
+ * V1.02 2015-05-20
+ * - Added MouseDownColor
  *
  * V1.01 2015-05-17
  * - Introduced custom base class
@@ -36,6 +39,7 @@ type
     FBorderColorLight: TColor;
     FHighlightColor: TColor;
     FMouseDown: Boolean;
+    FMouseDownColor: TColor;
     FNormalColor: TColor;
     FShadowColor: TColor;
     FUseShadowText: Boolean;
@@ -54,6 +58,7 @@ type
     property BorderColorDark: TColor read FBorderColorDark write FBorderColorDark;
     property BorderColorLight: TColor read FBorderColorLight write FBorderColorLight;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
+    property MouseDownColor: TColor read FMouseDownColor write FMouseDownColor;
     property ShadowColor: TColor read FShadowColor write FShadowColor;
     property UseShadowText: Boolean read FUseShadowText write SetUseShadowText;
   end;
@@ -137,7 +142,11 @@ begin
   oldPenColor := Canvas.Pen.Color;
 
   Canvas.Brush.Style := bsSolid;
-  Canvas.Brush.Color := FBackgroundColor;
+  if FMouseDown then
+    Canvas.Brush.Color := FMouseDownColor
+  else
+    Canvas.Brush.Color := FBackgroundColor;
+    
   Canvas.Pen.Color := FBackgroundColor;
   Canvas.Rectangle(0, 0, Width, Height);
 
