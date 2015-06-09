@@ -5,11 +5,14 @@ unit hpTabStrip;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  VCL
  * @package   hpTabStrip
- * @version   1.01
+ * @version   1.02
  *)
 
 (**
  * History
+ *
+ * V1.02 2015-06-09
+ * - Added SelectFirst method.
  *
  * V1.01 2015-05-14
  * - Added JPEG support.
@@ -46,6 +49,8 @@ type
     procedure SetTitle(const AValue: string); virtual;
     procedure SetTabButtonState(AValue: ThpTabStripButtonState);
     procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
+  public
+    procedure SelectFirstTab;
   published
     property Title: string read FTitle write SetTitle;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
@@ -78,6 +83,7 @@ type
     procedure LoadFromFile(const AFileName: string); virtual;
     procedure LoadFromJpegFile(const AFileName: string); virtual;
     procedure RenameTab(AIndex: Integer; const ATitle: string); virtual;
+    procedure SelectFirst;
   published
     property Glyph: TPicture read FGlyph write SetGlyph;
     property HighlightColor: TColor read FHighlightColor write SetHighlightColor;
@@ -266,6 +272,21 @@ begin
   if (AIndex >= 0) and (AIndex < ControlCount) then
     if Controls[AIndex] is ThpTabStripButton then
       (Controls[AIndex] as ThpTabStripButton).Title := ATitle;
+end;
+
+procedure ThpTabStrip.SelectFirst;
+var
+  i: Integer;
+  tab: ThpTabStripButton;
+begin
+  for i := 0 to ControlCount - 1 do
+    if Controls[i] is ThpTabStripButton then begin
+      tab := Controls[i] as ThpTabStripButton;
+      if i = 0 then
+        tab.SetTabButtonState := tbsSelected
+      else
+        tab.SetTabButtonState := tbsUnselected;
+    end;
 end;
 
 procedure ThpTabStrip.SetGlyph(AValue: TPicture);
