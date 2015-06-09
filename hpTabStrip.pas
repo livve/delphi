@@ -49,8 +49,6 @@ type
     procedure SetTitle(const AValue: string); virtual;
     procedure SetTabButtonState(AValue: ThpTabStripButtonState);
     procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
-  public
-    procedure SelectFirstTab;
   published
     property Title: string read FTitle write SetTitle;
     property HighlightColor: TColor read FHighlightColor write FHighlightColor;
@@ -283,9 +281,9 @@ begin
     if Controls[i] is ThpTabStripButton then begin
       tab := Controls[i] as ThpTabStripButton;
       if i = 0 then
-        tab.SetTabButtonState := tbsSelected
+        tab.SetTabButtonState(tbsSelected)
       else
-        tab.SetTabButtonState := tbsUnselected;
+        tab.SetTabButtonState(tbsUnselected);
     end;
 end;
 
