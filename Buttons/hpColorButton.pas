@@ -5,11 +5,14 @@ unit hpColorButton;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Buttons
  * @package   hpColorButton
- * @version   1.02
+ * @version   1.03
  *)
 
 (**
  * History
+ *
+ * V1.03 2015-06-09
+ * - Added MouseDown property
  *
  * V1.02 2015-05-20
  * - Added MouseDownColor
@@ -50,9 +53,12 @@ type
     procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure Paint; override;
+    procedure SetMouseDown(AValue: Boolean);
     procedure SetUseShadowText(AValue: Boolean);
     procedure WMLButtonDown(var Message: TWMLButtonDown); message WM_LBUTTONDOWN;
     procedure WMLButtonUp(var Message: TWMLButtonUp); message WM_LBUTTONUP;
+  public
+    property MouseDown: Boolean read FMouseDown write SetMouseDown;
   published
     property BackgroundColor: TColor read FBackgroundColor write FBackgroundColor;
     property BorderColorDark: TColor read FBorderColorDark write FBorderColorDark;
@@ -92,6 +98,14 @@ begin
 
   Height := 25;
   Width := 75;
+end;
+
+procedure ThpColorButton.SetMouseDown(AValue: Boolean);
+begin
+  if FMouseDown <> AValue then begin
+    FMouseDown := AValue;
+    Invalidate;
+  end;
 end;
 
 procedure ThpColorButton.SetUseShadowText(AValue: Boolean);
