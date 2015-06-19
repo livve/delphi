@@ -5,14 +5,17 @@ unit hpHistoryList;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Lists
  * @package   hpHistoryList
- * @version   1.00
+ * @version   1.01
  *)
 
 (**
  * History
  *
+ * 1.01       2015-06-18
+ *            Memory leak.
+ *
  * 1.00       2012-04-24
- *            Initial implementation
+ *            Initial implementation.
  *)
 
  interface
@@ -57,6 +60,8 @@ begin
     TStringList(FItems.Objects[i]).Free;
     FItems.Delete(i);
   end;
+  
+  FItems.Free;
   inherited;
 end;
 
