@@ -5,11 +5,14 @@ unit hpUserCommentList;
  * @author    Hans Pollaerts <pritaeas@gmail.com>
  * @category  Lists
  * @package   hpUserCommentList
- * @version   1.01
+ * @version   1.02
  *)
 
 (**
  * History
+ *
+ * V1.02 2015-08-11
+ * - Added GetDataString
  *
  * V1.01 2015-08-06
  * - Added LoadFromString
@@ -43,6 +46,7 @@ type
     procedure Delete(const AUser: string); virtual;
     function Find(const AUser: string): ThpComment; virtual;
     function GetComment(const AUser: string): string; virtual;
+    function GetDataString: string; virtual;
     procedure LoadFromString(AData: string); virtual;
   end;
 
@@ -139,6 +143,21 @@ begin
   item := Find(AUser);
   if item <> nil then
     Result := item.Comment;
+end;
+
+function ThpUserCommentList.GetDataString: string;
+var
+  i: Integer;
+  item: ThpComment;
+begin
+  Result := '';
+  for i := 0 to FItems.Count - 1 do begin
+    if Result > '' then
+      Result := Result + ',';
+      
+    item := ThpComment(FItems.Objects[i]);
+    Result := Result + FItems[i] + '=' + item.Comment;
+  end;
 end;
 
 procedure ThpUserCommentList.LoadFromString(AData: string);
